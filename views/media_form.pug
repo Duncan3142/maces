@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	h1 #{title}
+
+	form(method='POST' action='' enctype="multipart/form-data")
+		div
+			label(for='file') File:
+			input#file(type="file" name="file" accept=".jpg, .jpeg, .doc, .docx, .pdf")
+			label(for='description') Description:
+			input#description(type='text', placeholder='' name='description' value=(undefined===media ? '' : media.description))
+		button(type='submit') Submit
+
+	if errors
+		ul
+			for error in errors
+				li!= error.msg

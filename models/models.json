@@ -1,0 +1,3 @@
+{
+	"models" : ["event", "media", "event_media"]
+}

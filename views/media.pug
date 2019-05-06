@@ -1,0 +1,22 @@
+extends layout
+
+mixin mediaView(media)
+	h2
+		a(href=media.url) #{media.title}
+	p= media.name
+	p= media.url
+	p= media.description
+
+block content
+	h1= title
+	p Welcome to #[em Macmillan East Sheen].
+
+	if error
+		p Error fetching content.
+	else if media.length
+		p Available media:
+
+		each medium in media
+			+mediaView(medium)
+	else
+		p No media available.

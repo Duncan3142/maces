@@ -1,0 +1,28 @@
+{
+  "name": "maces",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node --inspect-brk=5858 ./bin/www",
+    "devstart": "nodemon --inspect-brk=5858 ./bin/www",
+    "populate": "node populate"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "debug": "^4.1.1",
+    "express": "^4.16.0",
+    "express-validator": "^5.3.1",
+    "http-errors": "^1.7.2",
+    "knex": "^0.16.5",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.0",
+    "multer": "^1.4.1",
+    "objection": "^1.6.8",
+    "pg": "^7.10.0",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "nodemon": "^1.19.0"
+  }
+}

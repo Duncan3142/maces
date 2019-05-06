@@ -1,0 +1,42 @@
+mixin navSection(title, links)
+	p= title
+	nav
+		each link in links
+			span
+				a(href=link.url) #{link.name}
+
+doctype html
+html(lang='en')
+	head
+		title= title
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+		link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css", integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+		div
+			block sidebar
+				+navSection('Navigation',[
+					{url: '/', name: 'Home'},
+					{url: '/about', name: 'About Us'},
+					{url: '/history', name: 'History'},
+					{url: '/thanks', name: 'Thanks'},
+					{url: '/photos', name: 'Photos'},
+					{url: '/media', name: 'Media'}
+				])
+				hr
+				+navSection('Edit',[
+					{url: '/events/create', name: 'Create event'}
+				])
+				hr
+				+navSection('Friends',[
+					{url: 'http://macmillanchiswick.com', name: 'Macmillan Chiswick'},
+					{url: 'http://macmillanmerton.com', name: 'Macmillan Merton'}
+				])
+				hr
+				+navSection('Contact',[
+					{url: 'mailto:macmillan.sheen@gmail.com', name: 'Send us an email'}
+				])
+
+				div
+					block content
