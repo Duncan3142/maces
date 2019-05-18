@@ -1,7 +1,0 @@
-{
-  "host": "localhost",
-  "port": 5432,
-  "database": "maces",
-  "user": "postgres",
-  "password": "[password]"
-}

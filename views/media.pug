@@ -2,10 +2,9 @@ extends layout
 
 mixin mediaView(media)
 	h2
-		a(href=media.url) #{media.title}
+		a(href=media.url) #{media.description}
+	p= media.type
 	p= media.name
-	p= media.url
-	p= media.description
 
 block content
 	h1= title

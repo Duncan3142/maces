@@ -1,7 +1,7 @@
 'use strict';
 
 const knex = require('knex');
-const connection = require('./connection.json');
+const connection = require('./connection.js');
 const db = knex({
 	client: 'pg',
 	connection
@@ -47,7 +47,7 @@ function createEventMedia(db) {
 async function createSchema(db) {
 	try {
 		await db.schema.dropTableIfExists('event_media');
-		await Promise.all([db.schema.dropTableIfExists('event'), db.schema.dropTableIfExists('media')])
+		await Promise.all([db.schema.dropTableIfExists('event'), db.schema.dropTableIfExists('media')]);
 		await Promise.all([createEvent(db), createMedia(db)]);
 		await createEventMedia(db);
 	} catch (err) {

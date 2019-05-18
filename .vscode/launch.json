@@ -1,54 +1,53 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch",
-            "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "npm",
-            "protocol": "inspector",
-            "runtimeArgs": [
-                "run", "start"
-            ],
-            "console": "integratedTerminal",
-            "env": {
-                "DEBUG": "maces:*"
-            },
-            "port": 5858
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch (nodemon)",
-            "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "npm",
-            "protocol": "inspector",
-            "runtimeArgs": [
-                "run", "devstart"
-            ],
-            "restart": true,
-            "console": "integratedTerminal",
-            "env": {
-                "DEBUG": "maces:*"
-            },
-            "port": 5858,
-
-				},
-				{
-					"type": "node",
-					"request": "launch",
-					"name": "Create Schema",
-					"program": "${workspaceFolder}/db/createSchema.js"
-			}
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Insert Data",
-            "program": "${workspaceFolder}/db/populate.js"
-        }
-    ]
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch",
+			"cwd": "${workspaceFolder}",
+			"runtimeExecutable": "npm",
+			"protocol": "inspector",
+			"runtimeArgs": [
+				"run", "start"
+			],
+			"console": "integratedTerminal",
+			"env": {
+				"DEBUG": "maces:*"
+			},
+			"port": 5858
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch (nodemon)",
+			"cwd": "${workspaceFolder}",
+			"runtimeExecutable": "npm",
+			"protocol": "inspector",
+			"runtimeArgs": [
+				"run", "devstart"
+			],
+			"restart": true,
+			"console": "integratedTerminal",
+			"env": {
+				"DEBUG": "maces:*"
+			},
+			"port": 5858,
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Create Schema",
+			"program": "${workspaceFolder}/db/createSchema.js"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Insert Data",
+			"program": "${workspaceFolder}/db/populate.js"
+		}
+	]
 }

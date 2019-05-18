@@ -7,20 +7,21 @@ function mediaModel(BaseModel) {
 			return 'media';
 		}
 
-		url(){
+		get url(){
 			return `media/${this.id}/${this.name}`;
 		}
 
 		static get jsonSchema() {
 			return {
 				type: 'object',
-				required: ['description', 'name', 'type'],
+				required: ['description', 'name', 'type', 'file'],
 
 				properties: {
 					id: {type: 'integer'},
 					description: {type: 'string', minLength: 1, maxLength: 255},
 					name: {type: 'string', minLength: 1, maxLength: 255},
-					type: {type: 'string', minLength: 1, maxLength: 255}
+					type: {type: 'string', minLength: 1, maxLength: 255},
+					file: {class: 'buffer'}
 				}
 			};
 		}

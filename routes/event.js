@@ -32,5 +32,4 @@ function eventRoutes(express, controller) {
 	return router;
 }
 
-
 module.exports = eventRoutes;

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
-const connection = require('./connection.json');
+const connection = require('./connection.js');
 const db = knex({
 	client: 'pg',
 	connection
@@ -19,16 +19,20 @@ function eventInsert(db, title, description, when, location, start, end) {
 }
 
 function eventMediaInsert(db, event_id, media_id) {
-	return db('event_media').insert({event_id, media_id})
+	return db('event_media').insert({event_id, media_id});
+}
+
+function deleteData(db) {
+	return db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete()]));
 }
 
 async function populate(db) {
 	try {
-		await db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete()]));
+		await deleteData(db);
 		const [mediaIDs, eventIDs] = await Promise.all([
 			Promise.all([
-				mediaInsert(db, 'bridgeflyer.pdf', 'A bridge flyer', 'image', 'committee.jpg'),
-				mediaInsert(db, 'saleApplication.docx', 'A sale application form', 'image', 'header.jpg')
+				mediaInsert(db, 'A bridge flyer', 'bridgeflyer.pdf', 'image', 'committee.jpg'),
+				mediaInsert(db, 'A sale application form', 'saleApplication.docx', 'image', 'header.jpg')
 			]),
 			Promise.all([
 				eventInsert(db, 'Coffee morn', 'A coffee morning', 'May 12th', 'Tower House', new Date(2019, 4, 12), new Date(2019, 4, 12)),
@@ -40,7 +44,7 @@ async function populate(db) {
 			eventMediaInsert(db, eventIDs[1][0], mediaIDs[0][0]),
 			eventMediaInsert(db, eventIDs[2][0], mediaIDs[0][0]),
 			eventMediaInsert(db, eventIDs[2][0], mediaIDs[1][0])
-		])
+		]);
 	} catch(err) {
 		console.log(err);
 	} finally {

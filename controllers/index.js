@@ -1,35 +1,42 @@
 'use strict';
 
-function indexController(models, raw, ref) {
+function eventQuery(Event) {
+	return Event.query()
+		.select([
+			'event.id',
+			'event.title',
+			'event.description',
+			'event.when',
+			'event.location',
+			'event.start',
+			'event.end',
+		])
+		.where('event.end', '>', new Date())
+		.orderBy('start')
+		.eager('media(mediaProjection)', {
+			mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type'])
+		});
+}
+
+async function renderEvents(Event, res, next) {
+	try {
+		const events = await eventQuery(Event);
+		res.render('index', { title: 'Macmillan East Sheen Home', events });
+	} catch(err) {
+		next(err);
+	}
+}
+
+function index(models) {
+	return async function(req, res, next) {
+		const Event = models.get('event');
+		await renderEvents(Event, res, next);
+	};
+}
+
+function indexController(models) {
 	return {
-		index: async function(req, res, next) {
-			try {
-				const Event = models.get('event');
-				const Media = models.get('media');
-				const events = await Event.query()
-					.select([
-						'event.id',
-						'event.title',
-						'event.description',
-						'event.when',
-						'event.location',
-						'event.start',
-						'event.end',
-						raw("coalesce(?, '{}')", [
-							Media.query()
-								.select(raw("array_agg(jsonb_build_object('id',media.id, 'type',media.type, 'name',media.name, 'description',media.description))"))
-								.joinRelation('event_media')
-								.where('event_id', ref('event.id'))
-								.groupBy('event_media.event_id')
-						]).as('media')
-					])
-					.where('event.end', '>', new Date())
-					.orderBy('event.start');
-				res.render('index', { title: 'Macmillan East Sheen Home', events });
-			} catch(err) {
-				return next(err);
-			}
-		}
+		index: index(models)
 	};
 }
 
