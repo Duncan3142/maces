@@ -10,12 +10,7 @@ const fs = require('fs');
 const dbConfig = require('./db/connection');
 const db = require('knex')({
 	client: 'pg',
-	connection: dbConfig,
-	log: {
-		error(message) {
-			console.error(`Postgres error: ${message}`);
-		}
-	}
+	connection: dbConfig
 });
 
 const objection = require('objection');
@@ -25,7 +20,7 @@ Model.knex(db);
 const models = new Map();
 
 function JSONConfig(path) {
-	return JSON.parse(fs.readFileSync(path));
+	return JSON.parse(fs.readFileSync(path, 'utf8'));
 }
 
 const modelConfig = JSONConfig('./models/models.json');
