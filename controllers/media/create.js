@@ -53,28 +53,14 @@ function createFile(models, validationResult) {
 	};
 }
 
-function bufferMimeTypeMatch(file, value, fileType) {
-	return file ? value === fileType(file.buffer).mime : false;
-}
-
-function mimeTypesMatch(fileType) {
-	return (value, { req }) => {
-		return bufferMimeTypeMatch(req.file, value, fileType);
-	};
-}
-
-function maxSize(max) {
-	return (size) => {
-		return size < max;
-	};
-}
-
 function post(multer, validators, models) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
 	const bodyValidator = validators.body;
 	const fileValidator = validators.file;
+	const mimeTypesMatch = fileValidator.typeMatch;
+	const maxSize = fileValidator.maxSize(maxFileSize);
 	const validationResult = validators.result;
 
 	const upload = multer({
@@ -97,10 +83,10 @@ function post(multer, validators, models) {
 		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
 
 		// Validate mime type.
-		fileValidator.check('mimetype', 'Claimed mime type must match file mime type.').custom(mimeTypesMatch(fileValidator.type)),
+		fileValidator.check('mimetype', 'Claimed mime type must match actual mime type.').custom(mimeTypesMatch),
 
 		// File size.
-		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB.`).custom(maxSize(maxFileSize)),
+		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB.`).custom(maxSize),
 
 		// Validate that the description field is not empty.
 		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
