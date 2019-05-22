@@ -34,11 +34,11 @@ function index(models) {
 	};
 }
 
-function indexController(models) {
+function controller(models) {
 	return {
 		index: index(models)
 	};
 }
 
 // GET home page.
-module.exports = indexController;
+module.exports = controller;

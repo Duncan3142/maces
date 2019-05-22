@@ -1,8 +1,9 @@
 {
 	"compilerOptions": {
+		"target": "es2016",
 		"checkJs": true
 	},
-	"typeAcquisition": {"enable": true},
+	"typeAcquisition": { "enable": true },
 	"exclude": [
 		"node_modules",
 		"**/node_modules/*"

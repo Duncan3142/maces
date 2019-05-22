@@ -31,17 +31,34 @@ for (let model of modelConfig.models) {
 	models.set(model, require(`./models/${model}`)(BaseModel));
 }
 
-const { body,validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+const { body, buildCheckFunction, validationResult } = require('express-validator/check');
+const file = buildCheckFunction(['file']);
+const { sanitizeBody, buildSanitizeFunction } = require('express-validator/filter');
+const sanitizeFile = buildSanitizeFunction(['file']);
+
 const multer = require('multer');
 
-const indexController = require('./controllers')(models);
+const bodyValidator = {
+	check: body,
+	filter: sanitizeBody
+};
+
+const fileValidator = {
+	check: file,
+	filter: sanitizeFile,
+	type: require('file-type')
+};
+
+const indexController = require('./controllers/index')(models);
 const indexRouter = require('./routes/index')(express, indexController);
 
 const eventController = require('./controllers/event')();
 const eventsRouter = require('./routes/event')(express, eventController);
 
-const mediaController = require('./controllers/media')(models, body, validationResult, sanitizeBody, multer);
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, models);
+const mediaList = require('./controllers/media/list')(models);
+
+const mediaController = require('./controllers/media/index')(mediaCreate, mediaList);
 const mediaRouter = require('./routes/media')(express, mediaController);
 
 const app = express();
