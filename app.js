@@ -17,46 +17,36 @@ const objection = require('objection');
 const Model = objection.Model;
 Model.knex(db);
 
-const models = new Map();
-
 function JSONConfig(path) {
 	return JSON.parse(fs.readFileSync(path, 'utf8'));
 }
 
 const modelConfig = JSONConfig('./models/models.json');
 
-const BaseModel = require('./models/base')(Model, models, require('./models/validator')(objection.AjvValidator));
+const modelRegistry = new Map();
+
+const BaseModel = require('./models/base')(Model, modelRegistry, require('./models/validator')(objection.AjvValidator));
 
 for (let model of modelConfig.models) {
-	models.set(model, require(`./models/${model}`)(BaseModel));
+	modelRegistry.set(model, require(`./models/${model}`)(BaseModel));
 }
 
 const { body, buildCheckFunction, validationResult } = require('express-validator/check');
-const file = buildCheckFunction(['file']);
 const { sanitizeBody, buildSanitizeFunction } = require('express-validator/filter');
-const sanitizeFile = buildSanitizeFunction(['file']);
 
 const multer = require('multer');
 
-const bodyValidator = {
-	check: body,
-	filter: sanitizeBody
-};
+const bodyValidator = require('./validators/body')(body, sanitizeBody);
+const fileValidator = require('./validators/file')(buildCheckFunction, buildSanitizeFunction, require('file-type'));
 
-const fileValidator = {
-	check: file,
-	filter: sanitizeFile,
-	type: require('file-type')
-};
-
-const indexController = require('./controllers/index')(models);
+const indexController = require('./controllers/index')(modelRegistry);
 const indexRouter = require('./routes/index')(express, indexController);
 
 const eventController = require('./controllers/event')();
 const eventsRouter = require('./routes/event')(express, eventController);
 
-const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, models);
-const mediaList = require('./controllers/media/list')(models);
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry);
+const mediaList = require('./controllers/media/list')(modelRegistry);
 
 const mediaController = require('./controllers/media/index')(mediaCreate, mediaList);
 const mediaRouter = require('./routes/media')(express, mediaController);
@@ -67,30 +57,20 @@ const app = express();
 app.set('views', './views');
 app.set('view engine', 'pug');
 
+// middlewares
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static('./public'));
 
+// routes
 app.use('/', indexRouter);
 app.use('/events', eventsRouter);
 app.use('/media', mediaRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-	next(createError(404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-	// set locals, only providing error in development
-	res.locals.message = err.message;
-	res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-	// render the error page
-	res.status(err.status || 500);
-	res.render('error');
-});
+// error handlers
+const errorHandlers = require('./controllers/error')(createError);
+app.use(errorHandlers);
 
 module.exports = app;
