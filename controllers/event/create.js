@@ -11,7 +11,7 @@ function eventInsertQuery(Event, data) {
 async function insertEvent(Event, data, res, next) {
 	try {
 		await eventInsertQuery(Event, data);
-		res.redirect('/error');
+		res.redirect('/');
 	} catch (err) {
 		next(err);
 	}
@@ -47,11 +47,7 @@ function createEvent(models, validationResult) {
 	};
 }
 
-function startBeforeEnd() {
-	return (value, { req }) => {
-		return (value <= req.body.end);
-	};
-}
+const startBeforeEnd = (start, { req }) => (start <= req.body.end);
 
 function post(validators, models) {
 
