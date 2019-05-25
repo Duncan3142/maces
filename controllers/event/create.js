@@ -36,12 +36,12 @@ async function validateEventCreate(errors, Event, req, res, next) {
 	}
 }
 
-function createEvent(models, validationResult) {
+function createEvent(modelRegistry, validationResult) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const Event = models.get('event');
+		const Event = modelRegistry.get('event');
 
 		await validateEventCreate(errors, Event, req, res, next);
 	};
@@ -49,7 +49,7 @@ function createEvent(models, validationResult) {
 
 const startBeforeEnd = (start, { req }) => (start <= req.body.end);
 
-function post(validators, models) {
+function post(validators, modelRegistry) {
 
 	const bodyValidator = validators.body;
 	const validationResult = validators.result;
@@ -83,14 +83,14 @@ function post(validators, models) {
 		bodyValidator.check('start', 'Start date must not come after end date').custom(startBeforeEnd),
 
 		// Process request after validation and sanitization.
-		createEvent(models, validationResult)
+		createEvent(modelRegistry, validationResult)
 	];
 }
 
-function controller(validators, models) {
+function controller(validators, modelRegistry) {
 	return {
 		get: get,
-		post: post(validators, models)
+		post: post(validators, modelRegistry)
 	};
 }
 

@@ -37,18 +37,18 @@ async function validateFileCreate(errors, Media, req, res, next) {
 	}
 }
 
-function createFile(models, validationResult) {
+function createFile(modelRegistry, validationResult) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const Media = models.get('media');
+		const Media = modelRegistry.get('media');
 
 		await validateFileCreate(errors, Media, req, res, next);
 	};
 }
 
-function post(multer, validators, models) {
+function post(multer, validators, modelRegistry) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
@@ -88,14 +88,14 @@ function post(multer, validators, models) {
 		bodyValidator.filter('description').trim(),
 
 		// Process request after validation and sanitization.
-		createFile(models, validationResult)
+		createFile(modelRegistry, validationResult)
 	];
 }
 
-function controller(multer, validators, models) {
+function controller(multer, validators, modelRegistry) {
 	return {
 		get: get,
-		post: post(multer, validators, models)
+		post: post(multer, validators, modelRegistry)
 	};
 }
 

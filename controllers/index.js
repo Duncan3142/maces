@@ -27,16 +27,16 @@ async function renderEvents(Event, res, next) {
 	}
 }
 
-function index(models) {
+function index(modelRegistry) {
 	return async function(req, res, next) {
-		const Event = models.get('event');
+		const Event = modelRegistry.get('event');
 		await renderEvents(Event, res, next);
 	};
 }
 
-function controller(models) {
+function controller(modelRegistry) {
 	return {
-		index: index(models)
+		index: index(modelRegistry)
 	};
 }
 
