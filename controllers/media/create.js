@@ -2,23 +2,19 @@ function get(req, res) {
 	res.render('media_form', {title: 'Upload media'});
 }
 
-function mediaUpdateQuery(Media, data) {
+function mediaInsertQuery(Media, data) {
 	return Media
 		.query()
 		.insert(data);
 }
 
-async function updateMedia(Media, data, res, next) {
+async function insertMedia(Media, data, res, next) {
 	try {
-		await mediaUpdateQuery(Media, data);
+		await mediaInsertQuery(Media, data);
 		res.redirect('/media');
 	} catch (err) {
 		next(err);
 	}
-}
-
-function originalFileName(file) {
-	return file ? file.originalname : '';
 }
 
 async function validateFileCreate(errors, Media, req, res, next) {
@@ -31,14 +27,13 @@ async function validateFileCreate(errors, Media, req, res, next) {
 			file: req.file.buffer
 		};
 
-		await updateMedia(Media, data, res, next);
+		await insertMedia(Media, data, res, next);
 	} else {
 		const data = {
-			description: req.body.description,
-			name: originalFileName(req.file)
+			description: req.body.description
 		};
 		// There are errors. Render the form again with sanitized values/error messages.
-		res.render('media_form', { title: 'Upload media', data, errors: errors.array() });
+		res.render('media_form', { title: 'Upload media', data, errors: errors.mapped() });
 	}
 }
 
@@ -60,7 +55,6 @@ function post(multer, validators, models) {
 	const bodyValidator = validators.body;
 	const fileValidator = validators.file;
 	const mimeTypesMatch = fileValidator.typeMatch;
-	const maxSize = fileValidator.maxSize(maxFileSize);
 	const validationResult = validators.result;
 
 	const upload = multer({
@@ -76,27 +70,22 @@ function post(multer, validators, models) {
 	return [
 		upload.single('file'),
 
+		// Validate that the description field is not empty.
+		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
+
 		// Validate mime type.
-		fileValidator.check('mimetype', `File must be one of the following mime types: ${mimeTypes}`).isIn(mimeTypes),
+		fileValidator.check('mimetype')
+			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`)
+			.custom(mimeTypesMatch).withMessage('Claimed mime type must match actual mime type.'),
 
 		// Validate the media name.
 		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
 
-		// Validate mime type.
-		fileValidator.check('mimetype', 'Claimed mime type must match actual mime type.').custom(mimeTypesMatch),
-
 		// File size.
-		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB.`).custom(maxSize),
+		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB`).isInt({max: maxFileSize}),
 
-		// Validate that the description field is not empty.
-		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
-
-		// Sanitize (escape) the name field.
-		fileValidator.filter('originalname').escape(),
-		// Sanitize (escape) the mime type.
-		fileValidator.filter('mimetype').escape(),
-		// Sanitize (escape) the description field.
-		bodyValidator.filter('description').trim().escape(),
+		// Sanitize (trim) the description field.
+		bodyValidator.filter('description').trim(),
 
 		// Process request after validation and sanitization.
 		createFile(models, validationResult)

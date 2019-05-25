@@ -8,18 +8,11 @@ function mimeTypesMatcher(fileType) {
 	};
 }
 
-function maxSize(max) {
-	return (size) => {
-		return size < max;
-	};
-}
-
 function validator(buildCheckFunction, buildSanitizeFunction, fileType) {
 	return {
 		check: buildCheckFunction(['file']),
 		filter: buildSanitizeFunction(['file']),
-		typeMatch: mimeTypesMatcher(fileType),
-		maxSize: maxSize
+		typeMatch: mimeTypesMatcher(fileType)
 	};
 }
 

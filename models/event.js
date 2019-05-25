@@ -18,8 +18,8 @@ function eventModel(BaseModel) {
 					description: {type: 'string', minLength: 1, maxLength: 255},
 					when: {type: 'string', minLength: 1, maxLength: 255},
 					location: {type: 'string', minLength: 1, maxLength: 255},
-					start: {type: 'string', format: 'date-time'},
-					end: {type: 'string', format: 'date-time'}
+					start: {class: 'date'},
+					end: {class: 'date'}
 				}
 			};
 		}

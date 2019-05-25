@@ -13,15 +13,6 @@ function mediaRouter(express, controller) {
 	// POST request for creating media.
 	router.post('/create', controller.create_post);
 
-	// GET request to delete media.
-	router.get('/:id/delete', controller.delete_get);
-
-	// POST request to delete media.
-	router.post('/:id/delete', controller.delete_post);
-
-	// GET request for one media.
-	router.get('/:id', controller.detail);
-
 	return router;
 }
 

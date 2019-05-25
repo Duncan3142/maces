@@ -1,0 +1,16 @@
+mixin error(errName)
+	if errors
+		if errors[errName]
+			li= errors[errName].msg
+
+mixin errorList(errNames)
+	ul
+		each errName in errNames
+			+error(errName)
+
+mixin pleaseCorrect()
+	if errors
+		h2 Please correct the following errors:
+		ul
+			each error in errors
+				li= error.msg

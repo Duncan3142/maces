@@ -8,14 +8,14 @@ const logger = require('morgan');
 //Set up pg connection
 const fs = require('fs');
 const dbConfig = require('./db/connection');
-const db = require('knex')({
+const knex = require('knex')({
 	client: 'pg',
 	connection: dbConfig
 });
 
 const objection = require('objection');
 const Model = objection.Model;
-Model.knex(db);
+Model.knex(knex);
 
 function JSONConfig(path) {
 	return JSON.parse(fs.readFileSync(path, 'utf8'));
@@ -42,16 +42,18 @@ const fileValidator = require('./validators/file')(buildCheckFunction, buildSani
 const indexController = require('./controllers/index')(modelRegistry);
 const indexRouter = require('./routes/index')(express, indexController);
 
-const eventController = require('./controllers/event')();
-const eventsRouter = require('./routes/event')(express, eventController);
+const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, modelRegistry);
+const eventController = require('./controllers/event/index')(eventCreate);
+const eventRouter = require('./routes/event')(express, eventController);
 
 const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry);
 const mediaList = require('./controllers/media/list')(modelRegistry);
-
-const mediaController = require('./controllers/media/index')(mediaCreate, mediaList);
+const mediaController = require('./controllers/media/index')(mediaList, mediaCreate);
 const mediaRouter = require('./routes/media')(express, mediaController);
 
 const app = express();
+
+app.locals.moment = require('moment');
 
 // view engine setup
 app.set('views', './views');
@@ -66,7 +68,7 @@ app.use(express.static('./public'));
 
 // routes
 app.use('/', indexRouter);
-app.use('/events', eventsRouter);
+app.use('/event', eventRouter);
 app.use('/media', mediaRouter);
 
 // error handlers

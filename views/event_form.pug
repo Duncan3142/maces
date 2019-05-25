@@ -1,0 +1,37 @@
+extends layout
+
+include validation
+
+block content
+	h1 #{title}
+
+	+pleaseCorrect()
+
+	form(method='POST' action='')
+		div
+			div
+				label(for='title') Title:
+				input#title(type='text', placeholder='' name='title' value=(data ? data.title : '') required='true')
+				+errorList(['title'])
+			div
+				label(for='description') Description:
+				textarea#description(placeholder='' name='description' required='true')
+					= data ? data.description : ''
+				+errorList(['description'])
+			div
+				label(for='when') When:
+				input#when(type='text', placeholder='' name='when' value=(data ? data.when : '') required='true')
+				+errorList(['when'])
+			div
+				label(for='location') Location:
+				input#location(type='text', placeholder='' name='location' value=(data ? data.location : '') required='true')
+				+errorList(['location'])
+			div
+				label(for='start') Start:
+				input#start(type='date', placeholder='yyyy-mm-dd' name='start' value=(data ? moment(data.start).format('YYYY-MM-DD') : '') required='true')
+				+errorList(['start'])
+			div
+				label(for='end') End:
+				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(data ? moment(data.end).format('YYYY-MM-DD') : '') required='true')
+				+errorList(['end'])
+		button(type='submit') Submit

@@ -1,12 +1,13 @@
 'use strict';
 
-function bufferValidator(data) {
-	return (data instanceof Buffer);
+function classValidator(Class) {
+	return (data) => data instanceof Class;
 }
 
 const classValidators = new Map();
 
-classValidators.set('buffer', bufferValidator);
+classValidators.set('buffer', classValidator(Buffer));
+classValidators.set('date', classValidator(Date));
 
 const keywordCompilers = [
 	{
