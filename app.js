@@ -68,8 +68,9 @@ app.use(express.static('./public'));
 
 // routes
 app.use('/', indexRouter);
-app.use('/event', eventRouter);
-app.use('/media', mediaRouter);
+
+const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});
+app.use('/admin', adminRouter);
 
 // error handlers
 const errorHandlers = require('./controllers/error')(createError);
