@@ -5,8 +5,9 @@ mixin eventView(event)
 		a(href=event.url) #{event.title}
 	p= event.location
 	p= event.when
-	//- p= when(event.start, event.end)
-	p= event.description
+	- descriptionParas = event.description.split('\n')
+	each para in descriptionParas
+		p= para
 	each media in event.media
 		ul
 			li
