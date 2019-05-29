@@ -32,6 +32,20 @@ block content
 				+errorList(['start'])
 			div
 				label(for='end') End:
-				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event ? moment(event.end).format('YYYY-MM-DD') : '') required='true')
+				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event ? moment(event.end).format('YYYY-MM-DD') : '') requiredd='true')
 				+errorList(['end'])
+			div
+				label(for='image') Image:
+				select#image(name='image')
+					option(value=-1)
+					each image in images
+						option(value=image.id selected=(image.selected)) #{image.description}
+				+errorList(['image'])
+			div
+				label(for='flyer') Flyer:
+				select#flyer(name='flyer')
+					option(value=-1)
+					each flyer in flyers
+						option(value=flyer.id selected=(flyer.selected)) #{flyer.description}
+				+errorList(['flyer'])
 		button(type='submit') Submit
