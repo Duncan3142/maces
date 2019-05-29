@@ -26,7 +26,11 @@ function get(modelRegistry, mimeFilters) {
 function eventInsertQuery(Event, event) {
 	return Event
 		.query()
-		.insert(event);
+		.upsertGraph(event,
+			{
+				relate: true,
+				unrelate: true
+			});
 }
 
 async function insertEvent(Event, event, routeHandles) {
@@ -47,10 +51,24 @@ function markSelected(available, selectedID) {
 	});
 }
 
-async function validateEventCreate(errors, models, mimeFilters, routeHandles) {
+function mediaArray(imageID, flyerID) {
+	const media = [];
+	if (imageID >= 0) {
+		media.push({id: imageID, usage: 'image'});
+	}
+	if (flyerID >= 0) {
+		media.push({id: flyerID, usage: 'flyer'});
+	}
+	return media;
+}
+
+async function validateEventCreate(errors, modelRegistry, mimeFilters, routeHandles) {
 
 	const req = routeHandles.req;
 	const res = routeHandles.res;
+
+	const Event = modelRegistry.get('event');
+	const Media = modelRegistry.get('media');
 
 	const event = {
 		title: req.body.title,
@@ -59,16 +77,16 @@ async function validateEventCreate(errors, models, mimeFilters, routeHandles) {
 		location: req.body.location,
 		start: req.body.start,
 		end: req.body.end,
-		images: req.body.images
+		media: mediaArray(req.body.image, req.body.flyer)
 	};
 
 	if (errors.isEmpty()) {
-		await insertEvent(models.Event, event, routeHandles);
+		await insertEvent(Event, event, routeHandles);
 	} else {
 		// There are errors. Render the form again with sanitized values/error messages.
-		const [availableImages, availableFlyers] = await mediaQueries(models.Media, mimeFilters);
-		const images = markSelected(availableImages, event.imageID);
-		const flyers = markSelected(availableFlyers, event.flyerID);
+		const [availableImages, availableFlyers] = await mediaQueries(Media, mimeFilters);
+		const images = markSelected(availableImages, req.body.image);
+		const flyers = markSelected(availableFlyers, req.body.flyer);
 		res.render('event_form', { title: 'Create event', event, images, flyers, errors: errors.mapped() });
 	}
 }
@@ -78,12 +96,7 @@ function createEvent(modelRegistry, validationResult, mimeFilters) {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const models = {
-			Event: modelRegistry.get('event'),
-			Media: modelRegistry.get('media')
-		};
-
-		await validateEventCreate(errors, models, mimeFilters, { req, res, next });
+		await validateEventCreate(errors, modelRegistry, mimeFilters, { req, res, next });
 	};
 }
 

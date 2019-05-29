@@ -32,7 +32,7 @@ block content
 				+errorList(['start'])
 			div
 				label(for='end') End:
-				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event ? moment(event.end).format('YYYY-MM-DD') : '') requiredd='true')
+				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event ? moment(event.end).format('YYYY-MM-DD') : '') required='true')
 				+errorList(['end'])
 			div
 				label(for='image') Image:
