@@ -22,6 +22,7 @@ function JSONConfig(path) {
 }
 
 const modelConfig = JSONConfig('./models/models.json');
+const mimeTypesConfig = JSONConfig('./models/mimeTypes.json');
 
 const modelRegistry = new Map();
 
@@ -42,14 +43,16 @@ const fileValidator = require('./validators/file')(buildCheckFunction, buildSani
 const indexController = require('./controllers/index')(modelRegistry);
 const indexRouter = require('./routes/index')(express, indexController);
 
-const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, modelRegistry);
+const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
 const eventController = require('./controllers/event/index')(eventCreate);
 const eventRouter = require('./routes/event')(express, eventController);
 
-const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry);
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
 const mediaList = require('./controllers/media/list')(modelRegistry);
 const mediaController = require('./controllers/media/index')(mediaList, mediaCreate);
 const mediaRouter = require('./routes/media')(express, mediaController);
+
+const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});
 
 const app = express();
 
@@ -68,8 +71,6 @@ app.use(express.static('./public'));
 
 // routes
 app.use('/', indexRouter);
-
-const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});
 app.use('/admin', adminRouter);
 
 // error handlers

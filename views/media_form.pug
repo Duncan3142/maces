@@ -15,6 +15,6 @@ block content
 				+errorList(['description'])
 			div
 				label(for='file') File:
-				input#file(type="file" name="file" accept="image/jpeg" required='true')
+				input#file(type="file" name="file" accept=(mimeTypes.toString()) required='true')
 				+errorList(['mimetype','originalname','size'])
 		button(type='submit') Submit

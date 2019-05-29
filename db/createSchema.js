@@ -38,6 +38,7 @@ function createEventMedia(db) {
 		table.increments('id');
 		table.integer('event_id').unsigned();
 		table.integer('media_id').unsigned();
+		table.string('usage');
 		table.foreign('event_id', 'event_media_event_fkey').references('id').inTable('event');
 		table.foreign('media_id', 'event_media_media_fkey').references('id').inTable('media');
 		table.timestamps();

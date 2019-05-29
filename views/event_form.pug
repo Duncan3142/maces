@@ -11,27 +11,27 @@ block content
 		div
 			div
 				label(for='title') Title:
-				input#title(type='text', placeholder='' name='title' value=(data ? data.title : '') required='true')
+				input#title(type='text', placeholder='' name='title' value=(event ? event.title : '') required='true')
 				+errorList(['title'])
 			div
 				label(for='description') Description:
 				textarea#description(placeholder='' name='description' required='true')
-					= data ? data.description : ''
+					= event ? event.description : ''
 				+errorList(['description'])
 			div
 				label(for='when') When:
-				input#when(type='text', placeholder='' name='when' value=(data ? data.when : '') required='true')
+				input#when(type='text', placeholder='' name='when' value=(event ? event.when : '') required='true')
 				+errorList(['when'])
 			div
 				label(for='location') Location:
-				input#location(type='text', placeholder='' name='location' value=(data ? data.location : '') required='true')
+				input#location(type='text', placeholder='' name='location' value=(event ? event.location : '') required='true')
 				+errorList(['location'])
 			div
 				label(for='start') Start:
-				input#start(type='date', placeholder='yyyy-mm-dd' name='start' value=(data ? moment(data.start).format('YYYY-MM-DD') : '') required='true')
+				input#start(type='date', placeholder='yyyy-mm-dd' name='start' value=(event ? moment(event.start).format('YYYY-MM-DD') : '') required='true')
 				+errorList(['start'])
 			div
 				label(for='end') End:
-				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(data ? moment(data.end).format('YYYY-MM-DD') : '') required='true')
+				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event ? moment(event.end).format('YYYY-MM-DD') : '') required='true')
 				+errorList(['end'])
 		button(type='submit') Submit

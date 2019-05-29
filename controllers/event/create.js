@@ -1,38 +1,80 @@
-function get(req, res) {
-	res.render('event_form', {title: 'Create event'});
+function imageQuery(Media, mimeFilter) {
+	return Media
+		.query()
+		.select([
+			'id',
+			'name',
+			'description',
+			'type'
+		])
+		.whereIn('type', mimeFilter)
+		.orderBy(['type', 'name']);
 }
 
-function eventInsertQuery(Event, data) {
+function documentQuery(Media, mimeFilter) {
+	return Media
+		.query()
+		.select([
+			'id',
+			'name',
+			'description',
+			'type'
+		])
+		.whereIn('type', mimeFilter)
+		.orderBy(['type', 'name']);
+}
+
+function get(modelRegistry, mimeFilters) {
+	return async function (req, res) {
+		const Media = modelRegistry.get('media');
+		const [images, docs] = await Promise.all([imageQuery(Media, mimeFilters.images), documentQuery(Media, mimeFilters.documents)]);
+		res.render('event_form', {title: 'Create event', images, docs});
+	};
+}
+
+function eventInsertQuery(Event, event) {
 	return Event
 		.query()
-		.insert(data);
+		.insert(event);
 }
 
-async function insertEvent(Event, data, res, next) {
+async function insertEvent(Event, event, res, next) {
 	try {
-		await eventInsertQuery(Event, data);
+		await eventInsertQuery(Event, event);
 		res.redirect('/');
 	} catch (err) {
 		next(err);
 	}
 }
 
-async function validateEventCreate(errors, Event, req, res, next) {
+function checkSelected(available, selectedID) {
+	return available.map(elem => {
+		if (elem.id === selectedID) {
+			elem.checked = 'true';
+		}
+		return elem;
+	});
+}
 
-	const data = {
+async function validateEventCreate(errors, models, req, res, next) {
+
+	const event = {
 		title: req.body.title,
 		description: req.body.description,
 		when: req.body.when,
 		location: req.body.location,
 		start: req.body.start,
-		end: req.body.end
+		end: req.body.end,
+		images: req.body.images
 	};
 
 	if (errors.isEmpty()) {
-		await insertEvent(Event, data, res, next);
+		await insertEvent(models.Event, event, res, next);
 	} else {
 		// There are errors. Render the form again with sanitized values/error messages.
-		res.render('event_form', { title: 'Create event', data, errors: errors.mapped() });
+		const availableImages = await imageQuery(models.Media);
+		const checkedImages = checkSelected(availableImages, event.images);
+		res.render('event_form', { title: 'Create event', event, checkedImages, errors: errors.mapped() });
 	}
 }
 
@@ -41,13 +83,27 @@ function createEvent(modelRegistry, validationResult) {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const Event = modelRegistry.get('event');
+		const models = {
+			Event: modelRegistry.get('event'),
+			Media: modelRegistry.get('media')
+		};
 
-		await validateEventCreate(errors, Event, req, res, next);
+		await validateEventCreate(errors, models, req, res, next);
 	};
 }
 
 const startBeforeEnd = (start, { req }) => (start <= req.body.end);
+
+// function coerceImages(req, res, next) {
+// 	if (!Array.isArray(req.body.images)) {
+// 		if (req.body.images) {
+// 			req.body.images = new Array(req.body.images);
+// 		} else {
+// 			req.body.images = [];
+// 		}
+// 	}
+// 	next();
+// }
 
 function post(validators, modelRegistry) {
 
@@ -55,6 +111,8 @@ function post(validators, modelRegistry) {
 	const validationResult = validators.result;
 
 	return [
+
+		// coerceImages,
 
 		bodyValidator.check('title', 'Event title required').isLength({ min: 1 }).trim(),
 
@@ -64,9 +122,9 @@ function post(validators, modelRegistry) {
 
 		bodyValidator.check('location', 'Event location required').isLength({ min: 1 }).trim(),
 
-		bodyValidator.check('start', 'Event start required').isISO8601({strict: true}),
+		bodyValidator.check('start', 'Event start required').isISO8601({ strict: true }),
 
-		bodyValidator.check('end', 'Event end required').isISO8601({strict: true}),
+		bodyValidator.check('end', 'Event end required').isISO8601({ strict: true }),
 
 		bodyValidator.filter('title').trim(),
 
@@ -80,6 +138,10 @@ function post(validators, modelRegistry) {
 
 		bodyValidator.filter('end').toDate(),
 
+		// bodyValidator.filter('image.*').escape(),
+
+		// bodyValidator.filter('document.*').escape(),
+
 		bodyValidator.check('start', 'Start date must not come after end date').custom(startBeforeEnd),
 
 		// Process request after validation and sanitization.
@@ -87,9 +149,9 @@ function post(validators, modelRegistry) {
 	];
 }
 
-function controller(validators, modelRegistry) {
+function controller(validators, modelRegistry, mimeFilters) {
 	return {
-		get: get,
+		get: get(modelRegistry, mimeFilters),
 		post: post(validators, modelRegistry)
 	};
 }

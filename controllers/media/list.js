@@ -6,7 +6,7 @@ function selectQuery(Media) {
 			'description',
 			'type'
 		])
-		.orderBy('type');
+		.orderBy(['type', 'name']);
 }
 
 async function render(Media, res, next) {

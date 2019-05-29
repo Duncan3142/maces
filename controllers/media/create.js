@@ -1,5 +1,7 @@
-function get(req, res) {
-	res.render('media_form', {title: 'Upload media'});
+function get(mimeTypes) {
+	return function(req, res) {
+		res.render('media_form', {title: 'Upload media', mimeTypes});
+	};
 }
 
 function mediaInsertQuery(Media, data) {
@@ -11,13 +13,13 @@ function mediaInsertQuery(Media, data) {
 async function insertMedia(Media, data, res, next) {
 	try {
 		await mediaInsertQuery(Media, data);
-		res.redirect('/media');
+		res.redirect('/admin/media');
 	} catch (err) {
 		next(err);
 	}
 }
 
-async function validateFileCreate(errors, Media, req, res, next) {
+async function validateFileCreate(mimeTypes, errors, Media, req, res, next) {
 
 	if (errors.isEmpty()) {
 		const data = {
@@ -33,22 +35,22 @@ async function validateFileCreate(errors, Media, req, res, next) {
 			description: req.body.description
 		};
 		// There are errors. Render the form again with sanitized values/error messages.
-		res.render('media_form', { title: 'Upload media', data, errors: errors.mapped() });
+		res.render('media_form', { title: 'Upload media', mimeTypes, data, errors: errors.mapped() });
 	}
 }
 
-function createFile(modelRegistry, validationResult) {
+function createFile(modelRegistry, validationResult, mimeTypes) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
 		const Media = modelRegistry.get('media');
 
-		await validateFileCreate(errors, Media, req, res, next);
+		await validateFileCreate(mimeTypes, errors, Media, req, res, next);
 	};
 }
 
-function post(multer, validators, modelRegistry) {
+function post(multer, validators, modelRegistry, mimeTypes) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
@@ -64,8 +66,6 @@ function post(multer, validators, modelRegistry) {
 			files: 1 // 1 file
 		}
 	});
-
-	const mimeTypes = ['image/jpeg'];
 
 	return [
 		upload.single('file'),
@@ -88,14 +88,21 @@ function post(multer, validators, modelRegistry) {
 		bodyValidator.filter('description').trim(),
 
 		// Process request after validation and sanitization.
-		createFile(modelRegistry, validationResult)
+		createFile(modelRegistry, validationResult, mimeTypes)
 	];
 }
 
-function controller(multer, validators, modelRegistry) {
+function flattenMimeFilters(mimeFilters) {
+	return [].concat(mimeFilters.images).concat(mimeFilters.documents);
+}
+
+function controller(multer, validators, modelRegistry, mimeFilters) {
+
+	const mimeTypes = flattenMimeFilters(mimeFilters);
+
 	return {
-		get: get,
-		post: post(multer, validators, modelRegistry)
+		get: get(mimeTypes),
+		post: post(multer, validators, modelRegistry, mimeTypes)
 	};
 }
 
