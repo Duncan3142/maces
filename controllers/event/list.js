@@ -24,15 +24,15 @@ async function render(Event, res, next) {
 	}
 }
 
-function list(modelRegistry) {
+function list(database) {
 	return async function(req, res, next) {
-		const Event = modelRegistry.get('event');
+		const Event = database.getModel('event');
 		await render(Event, res, next);
 	};
 }
 
-function controller(modelRegistry) {
-	return list(modelRegistry);
+function controller(database) {
+	return list(database);
 }
 
 module.exports = controller;

@@ -39,18 +39,18 @@ async function validateFileCreate(mimeTypes, errors, Media, req, res, next) {
 	}
 }
 
-function createFile(modelRegistry, validationResult, mimeTypes) {
+function createFile(database, validationResult, mimeTypes) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const Media = modelRegistry.get('media');
+		const Media = database.getModel('media');
 
 		await validateFileCreate(mimeTypes, errors, Media, req, res, next);
 	};
 }
 
-function post(multer, validators, modelRegistry, mimeTypes) {
+function post(multer, validators, database, mimeTypes) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
@@ -88,7 +88,7 @@ function post(multer, validators, modelRegistry, mimeTypes) {
 		bodyValidator.filter('description').trim(),
 
 		// Process request after validation and sanitization.
-		createFile(modelRegistry, validationResult, mimeTypes)
+		createFile(database, validationResult, mimeTypes)
 	];
 }
 
@@ -96,13 +96,13 @@ function flattenMimeFilters(mimeFilters) {
 	return [].concat(mimeFilters.images).concat(mimeFilters.documents);
 }
 
-function controller(multer, validators, modelRegistry, mimeFilters) {
+function controller(multer, validators, database, mimeFilters) {
 
 	const mimeTypes = flattenMimeFilters(mimeFilters);
 
 	return {
 		get: get(mimeTypes),
-		post: post(multer, validators, modelRegistry, mimeTypes)
+		post: post(multer, validators, database, mimeTypes)
 	};
 }
 

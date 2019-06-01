@@ -15,8 +15,10 @@ async function deleteMedia(Media, mediaID, routeHandles) {
 	const next = routeHandles.next;
 	try {
 		const media = await Media.query().findById(mediaID);
-		await unrelateEventQuery(media);
-		await deleteMediaQuery(Media, mediaID);
+		if (media) {
+			await unrelateEventQuery(media);
+			await deleteMediaQuery(Media, mediaID);
+		}
 		res.redirect('/admin/media');
 	} catch(err) {
 		next(err);
@@ -42,8 +44,8 @@ function removeMedia(Media, validationResult) {
 	};
 }
 
-function remove(modelRegistry, validators) {
-	const Media = modelRegistry.get('media');
+function remove(database, validators) {
+	const Media = database.getModel('media');
 	const paramValidator = validators.param;
 	const validationResult = validators.result;
 
@@ -54,8 +56,8 @@ function remove(modelRegistry, validators) {
 	];
 }
 
-function controller(modelRegistry, validators) {
-	return remove(modelRegistry, validators);
+function controller(database, validators) {
+	return remove(database, validators);
 }
 
 module.exports = controller;

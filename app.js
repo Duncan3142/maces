@@ -32,6 +32,8 @@ for (let model of modelConfig.models) {
 	modelRegistry.set(model, require(`./models/${model}`)(BaseModel));
 }
 
+const database = require('./models/database')(modelRegistry, knex, objection.transaction);
+
 const { body, param, buildCheckFunction, validationResult } = require('express-validator/check');
 const { sanitizeBody, sanitizeParam, buildSanitizeFunction } = require('express-validator/filter');
 
@@ -41,18 +43,18 @@ const bodyValidator = require('./validators/body')(body, sanitizeBody);
 const paramValidator = require('./validators/param')(param, sanitizeParam);
 const fileValidator = require('./validators/file')(buildCheckFunction, buildSanitizeFunction, require('file-type'));
 
-const indexController = require('./controllers/index')(modelRegistry);
+const indexController = require('./controllers/index')(database);
 const indexRouter = require('./routes/index')(express, indexController);
 
-const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
-const eventList = require('./controllers/event/list')(modelRegistry);
-const eventRemove = require('./controllers/event/remove')(modelRegistry, {param: paramValidator, result: validationResult});
+const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, database, mimeTypesConfig);
+const eventList = require('./controllers/event/list')(database);
+const eventRemove = require('./controllers/event/remove')(database, {param: paramValidator, result: validationResult});
 const eventController = require('./controllers/event/index')(eventList, eventCreate, eventRemove);
 const eventRouter = require('./routes/event')(express, eventController);
 
-const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
-const mediaList = require('./controllers/media/list')(modelRegistry);
-const mediaRemove = require('./controllers/media/remove')(modelRegistry, {param: paramValidator, result: validationResult});
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, database, mimeTypesConfig);
+const mediaList = require('./controllers/media/list')(database);
+const mediaRemove = require('./controllers/media/remove')(database, {param: paramValidator, result: validationResult});
 const mediaController = require('./controllers/media/index')(mediaList, mediaCreate, mediaRemove);
 const mediaRouter = require('./routes/media')(express, mediaController);
 

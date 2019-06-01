@@ -15,9 +15,9 @@ function mediaQueries(Media, mimeFilters) {
 	return Promise.all([mediaQuery(Media, mimeFilters.images), mediaQuery(Media, mimeFilters.documents)]);
 }
 
-function get(modelRegistry, mimeFilters) {
+function get(database, mimeFilters) {
 	return async function (req, res) {
-		const Media = modelRegistry.get('media');
+		const Media = database.getModel('media');
 		const [images, flyers] = await mediaQueries(Media, mimeFilters);
 		res.render('admin/event_form', {title: 'Create event', images, flyers});
 	};
@@ -62,13 +62,13 @@ function mediaArray(imageID, flyerID) {
 	return media;
 }
 
-async function validateEventCreate(errors, modelRegistry, mimeFilters, routeHandles) {
+async function validateEventCreate(errors, database, mimeFilters, routeHandles) {
 
 	const req = routeHandles.req;
 	const res = routeHandles.res;
 
-	const Event = modelRegistry.get('event');
-	const Media = modelRegistry.get('media');
+	const Event = database.getModel('event');
+	const Media = database.getModel('media');
 
 	const event = {
 		title: req.body.title,
@@ -91,12 +91,12 @@ async function validateEventCreate(errors, modelRegistry, mimeFilters, routeHand
 	}
 }
 
-function createEvent(modelRegistry, validationResult, mimeFilters) {
+function createEvent(database, validationResult, mimeFilters) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		await validateEventCreate(errors, modelRegistry, mimeFilters, { req, res, next });
+		await validateEventCreate(errors, database, mimeFilters, { req, res, next });
 	};
 }
 
@@ -118,11 +118,11 @@ function validMediaID(Media, mimeFilter) {
 	};
 }
 
-function post(validators, modelRegistry, mimeFilters) {
+function post(validators, database, mimeFilters) {
 
 	const bodyValidator = validators.body;
 	const validationResult = validators.result;
-	const Media = modelRegistry.get('media');
+	const Media = database.getModel('media');
 
 	return [
 
@@ -154,14 +154,14 @@ function post(validators, modelRegistry, mimeFilters) {
 		bodyValidator.check('flyer', 'Flyer ID must exists').custom(validMediaID(Media, mimeFilters.documents)),
 
 		// Process request after validation and sanitization.
-		createEvent(modelRegistry, validationResult, mimeFilters)
+		createEvent(database, validationResult, mimeFilters)
 	];
 }
 
-function controller(validators, modelRegistry, mimeFilters) {
+function controller(validators, database, mimeFilters) {
 	return {
-		get: get(modelRegistry, mimeFilters),
-		post: post(validators, modelRegistry, mimeFilters)
+		get: get(database, mimeFilters),
+		post: post(validators, database, mimeFilters)
 	};
 }
 

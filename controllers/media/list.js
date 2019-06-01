@@ -18,15 +18,15 @@ async function render(Media, res, next) {
 	}
 }
 
-function list(modelRegistry) {
+function list(database) {
 	return async function(req, res, next) {
-		const Media = modelRegistry.get('media');
+		const Media = database.getModel('media');
 		await render(Media, res, next);
 	};
 }
 
-function controller(modelRegistry) {
-	return list(modelRegistry);
+function controller(database) {
+	return list(database);
 }
 
 module.exports = controller;

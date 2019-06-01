@@ -15,8 +15,10 @@ async function deleteEvent(Event, eventID, routeHandles) {
 	const next = routeHandles.next;
 	try {
 		const event = await Event.query().findById(eventID);
-		await unrelateMediaQuery(event);
-		await deleteEventQuery(Event, eventID);
+		if (event) {
+			await unrelateMediaQuery(event);
+			await deleteEventQuery(Event, eventID);
+		}
 		res.redirect('/admin/event');
 	} catch(err) {
 		next(err);
@@ -42,8 +44,8 @@ function removeEvent(Event, validationResult) {
 	};
 }
 
-function remove(modelRegistry, validators) {
-	const Event = modelRegistry.get('event');
+function remove(database, validators) {
+	const Event = database.getModel('event');
 	const paramValidator = validators.param;
 	const validationResult = validators.result;
 
@@ -54,8 +56,8 @@ function remove(modelRegistry, validators) {
 	];
 }
 
-function controller(modelRegistry, validators) {
-	return remove(modelRegistry, validators);
+function controller(database, validators) {
+	return remove(database, validators);
 }
 
 module.exports = controller;
