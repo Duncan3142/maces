@@ -13,6 +13,9 @@ function eventRoutes(express, controller) {
 	// POST request for creating Event.
 	router.post('/create', controller.create_post);
 
+	// POST request for deleting media.
+	router.post('/:id/delete', controller.remove);
+
 	return router;
 }
 

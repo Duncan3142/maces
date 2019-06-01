@@ -13,17 +13,18 @@ mixin eventView(event)
 			li
 				p= media.description
 				p= media.usage
+	form(method='POST' action=`/admin/event/${event.id}/delete`)
+		div
+			button(type='submit') Delete
 
 block content
-	h1= title
-	p Welcome to #[em Macmillan East Sheen].
 
 	if error
 		p Error fetching content.
 	else if events.length
-		p Please find our upcoming events below:
+		h1 Events:
 
 		each event in events
 			+eventView(event)
 	else
-		p Watch this space for upcoming events.
+		p No events.

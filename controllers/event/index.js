@@ -1,6 +1,6 @@
 'use strict';
 
-function eventController(list, create) {
+function eventController(list, create, remove) {
 	return {
 
 		list: list,
@@ -9,7 +9,9 @@ function eventController(list, create) {
 		create_get: create.get,
 
 		// Handle event create on POST.
-		create_post: create.post
+		create_post: create.post,
+
+		remove: remove
 	};
 }
 

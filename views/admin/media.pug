@@ -10,15 +10,13 @@ mixin mediaView(media)
 			button(type='submit') Delete
 
 block content
-	h1= title
-	p Welcome to #[em Macmillan East Sheen].
 
 	if error
 		p Error fetching content.
 	else if media.length
-		p Available media:
+		h1 Media:
 
 		each medium in media
 			+mediaView(medium)
 	else
-		p No media available.
+		p No media.

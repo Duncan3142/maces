@@ -46,7 +46,8 @@ const indexRouter = require('./routes/index')(express, indexController);
 
 const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
 const eventList = require('./controllers/event/list')(modelRegistry);
-const eventController = require('./controllers/event/index')(eventList, eventCreate);
+const eventRemove = require('./controllers/event/remove')(modelRegistry, {param: paramValidator, result: validationResult});
+const eventController = require('./controllers/event/index')(eventList, eventCreate, eventRemove);
 const eventRouter = require('./routes/event')(express, eventController);
 
 const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, modelRegistry, mimeTypesConfig);
