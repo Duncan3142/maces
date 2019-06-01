@@ -5,6 +5,8 @@ function eventRoutes(express, controller) {
 
 	/// EVENT ROUTES ///
 
+	router.get('/', controller.list);
+
 	// GET request for creating a Event. NOTE This must come before routes that display Event (uses id).
 	router.get('/create', controller.create_get);
 

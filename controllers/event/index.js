@@ -1,7 +1,9 @@
 'use strict';
 
-function eventController(create) {
+function eventController(list, create) {
 	return {
+
+		list: list,
 
 		// Display event create form on GET.
 		create_get: create.get,
