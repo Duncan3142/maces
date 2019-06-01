@@ -1,6 +1,6 @@
 function get(mimeTypes) {
 	return function(req, res) {
-		res.render('media_form', {title: 'Upload media', mimeTypes});
+		res.render('admin/media_form', {title: 'Upload media', mimeTypes});
 	};
 }
 
@@ -35,7 +35,7 @@ async function validateFileCreate(mimeTypes, errors, Media, req, res, next) {
 			description: req.body.description
 		};
 		// There are errors. Render the form again with sanitized values/error messages.
-		res.render('media_form', { title: 'Upload media', mimeTypes, data, errors: errors.mapped() });
+		res.render('admin/media_form', { title: 'Upload media', mimeTypes, data, errors: errors.mapped() });
 	}
 }
 

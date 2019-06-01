@@ -12,7 +12,7 @@ function selectQuery(Media) {
 async function render(Media, res, next) {
 	try {
 		const media = await selectQuery(Media);
-		res.render('media', { title: 'Macmillan East Sheen Home', media });
+		res.render('admin/media', { title: 'Macmillan East Sheen Home', media });
 	} catch(err) {
 		next(err);
 	}

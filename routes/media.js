@@ -13,6 +13,9 @@ function mediaRouter(express, controller) {
 	// POST request for creating media.
 	router.post('/create', controller.create_post);
 
+	// POST request for creating media.
+	router.post('/:id/delete', controller.remove);
+
 	return router;
 }
 

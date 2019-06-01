@@ -1,6 +1,6 @@
 'use strict';
 
-function mediaContoller(list, create) {
+function mediaContoller(list, create, remove) {
 	return {
 		// Display list of all media.
 		list: list,
@@ -10,6 +10,8 @@ function mediaContoller(list, create) {
 
 		// Handle media create on POST.
 		create_post: create.post,
+
+		remove: remove
 	};
 }
 

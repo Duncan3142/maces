@@ -19,11 +19,11 @@ function get(modelRegistry, mimeFilters) {
 	return async function (req, res) {
 		const Media = modelRegistry.get('media');
 		const [images, flyers] = await mediaQueries(Media, mimeFilters);
-		res.render('event_form', {title: 'Create event', images, flyers});
+		res.render('admin/event_form', {title: 'Create event', images, flyers});
 	};
 }
 
-function eventInsertQuery(Event, event) {
+function eventUpsertQuery(Event, event) {
 	return Event
 		.query()
 		.upsertGraph(event,
@@ -37,7 +37,7 @@ async function insertEvent(Event, event, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;
 	try {
-		await eventInsertQuery(Event, event);
+		await eventUpsertQuery(Event, event);
 		res.redirect('/');
 	} catch (err) {
 		next(err);
@@ -87,7 +87,7 @@ async function validateEventCreate(errors, modelRegistry, mimeFilters, routeHand
 		const [availableImages, availableFlyers] = await mediaQueries(Media, mimeFilters);
 		const images = markSelected(availableImages, req.body.image);
 		const flyers = markSelected(availableFlyers, req.body.flyer);
-		res.render('event_form', { title: 'Create event', event, images, flyers, errors: errors.mapped() });
+		res.render('admin/event_form', { title: 'Create event', event, images, flyers, errors: errors.mapped() });
 	}
 }
 

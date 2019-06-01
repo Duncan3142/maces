@@ -1,10 +1,13 @@
-extends layout
+extends ../layout
 
 mixin mediaView(media)
 	h2
 		a(href=media.url) #{media.description}
 	p= media.type
 	p= media.name
+	form(method='POST' action=`/admin/media/${media.id}/delete`)
+		div
+			button(type='submit') Delete
 
 block content
 	h1= title
