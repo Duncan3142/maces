@@ -1,58 +1,60 @@
-function unrelateMediaQuery(event) {
-	return event
-		.$relatedQuery('media')
-		.unrelate();
+async function deleteEventGraph(EventModel, trnx, eventID) {
+	const event = await EventModel.query(trnx).findById(eventID);
+	if (event) {
+		await event.$relatedQuery('media', trnx).unrelate();
+		await EventModel.query(trnx).deleteById(eventID);
+	}
 }
 
-function deleteEventQuery(Event, id) {
-	return Event
-		.query()
-		.deleteById(id);
+async function deleteEventTransaction(database, eventID) {
+	const EventModel = database.getModel('event');
+	const trnx = await database.startTransaction();
+	try {
+		await deleteEventGraph(EventModel, trnx, eventID);
+		return trnx.commit();
+	} catch(err) {
+		return trnx.rollback(err);
+	}
 }
 
-async function deleteEvent(Event, eventID, routeHandles) {
+async function deleteEvent(database, eventID, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;
 	try {
-		const event = await Event.query().findById(eventID);
-		if (event) {
-			await unrelateMediaQuery(event);
-			await deleteEventQuery(Event, eventID);
-		}
+		await deleteEventTransaction(database, eventID);
 		res.redirect('/admin/event');
 	} catch(err) {
 		next(err);
 	}
 }
 
-async function validateRemoveEvent(errors, Event, routeHandles) {
+async function validateRemoveEvent(errors, database, routeHandles) {
 
 	const req = routeHandles.req;
 	const res = routeHandles.res;
 
 	if (errors.isEmpty()) {
-		await deleteEvent(Event, req.params.id, routeHandles);
+		await deleteEvent(database, req.params.id, routeHandles);
 	} else {
 		res.redirect('/admin/event');
 	}
 }
 
-function removeEvent(Event, validationResult) {
+function removeEvent(database, validationResult) {
 	return async function(req, res, next) {
 		const errors = validationResult(req);
-		await validateRemoveEvent(errors, Event, { req, res, next });
+		await validateRemoveEvent(errors, database, { req, res, next });
 	};
 }
 
 function remove(database, validators) {
-	const Event = database.getModel('event');
 	const paramValidator = validators.param;
 	const validationResult = validators.result;
 
 	return [
 		paramValidator.check('id', 'ID must be an integer').isInt(),
 		paramValidator.filter('id').toInt(),
-		removeEvent(Event, validationResult)
+		removeEvent(database, validationResult)
 	];
 }
 

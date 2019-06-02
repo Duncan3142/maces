@@ -23,22 +23,29 @@ function get(database, mimeFilters) {
 	};
 }
 
-function eventUpsertQuery(Event, event) {
-	return Event
-		.query()
-		.upsertGraph(event,
-			{
-				relate: true,
-				unrelate: true
-			});
+async function eventUpsertTransaction(database, event) {
+	const Event = database.getModel('event');
+	const trnx = await database.startTransaction();
+	try {
+		await Event
+			.query(trnx)
+			.upsertGraph(event,
+				{
+					relate: true,
+					unrelate: true
+				});
+		return trnx.commit();
+	} catch (err) {
+		return trnx.rollback(err);
+	}
 }
 
-async function insertEvent(Event, event, routeHandles) {
+async function insertEvent(database, event, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;
 	try {
-		await eventUpsertQuery(Event, event);
-		res.redirect('/');
+		await eventUpsertTransaction(database, event);
+		res.redirect('/admin/event');
 	} catch (err) {
 		next(err);
 	}
@@ -67,7 +74,6 @@ async function validateEventCreate(errors, database, mimeFilters, routeHandles) 
 	const req = routeHandles.req;
 	const res = routeHandles.res;
 
-	const Event = database.getModel('event');
 	const Media = database.getModel('media');
 
 	const event = {
@@ -81,7 +87,7 @@ async function validateEventCreate(errors, database, mimeFilters, routeHandles) 
 	};
 
 	if (errors.isEmpty()) {
-		await insertEvent(Event, event, routeHandles);
+		await insertEvent(database, event, routeHandles);
 	} else {
 		// There are errors. Render the form again with sanitized values/error messages.
 		const [availableImages, availableFlyers] = await mediaQueries(Media, mimeFilters);
