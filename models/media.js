@@ -7,10 +7,6 @@ function mediaModel(BaseModel) {
 			return 'media';
 		}
 
-		get url(){
-			return `media/${this.id}/${this.name}`;
-		}
-
 		static get jsonSchema() {
 			return {
 				type: 'object',

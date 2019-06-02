@@ -2,7 +2,7 @@ extends ../layout
 
 mixin mediaView(media)
 	h2
-		a(href=media.url) #{media.description}
+		a(href='') #{media.description}
 	p= media.type
 	p= media.name
 	form(method='POST' action=`/admin/media/${media.id}/delete`)
