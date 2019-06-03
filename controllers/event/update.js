@@ -15,12 +15,80 @@ function mediaQueries(Media, mimeFilters) {
 	return Promise.all([mediaQuery(Media, mimeFilters.images), mediaQuery(Media, mimeFilters.documents)]);
 }
 
-function get(database, mimeFilters) {
-	return async function (req, res) {
+function getMediaID(media, usage) {
+	return media.reduce((acc, elem) => {
+		let result = acc;
+		if (elem.usage === usage) {
+			result = elem.id;
+		}
+		return result;
+	}, -1);
+}
+
+async function renderForm(database, mimeFilters, routeHandles) {
+	const req = routeHandles.req;
+	const res = routeHandles.res;
+	const next = routeHandles.next;
+
+	const EventModel = database.getModel('event');
+
+	const event = await EventModel
+		.query()
+		.select([
+			'id',
+			'title',
+			'description',
+			'when',
+			'location',
+			'start',
+			'end'
+		])
+		.where('id', req.params.id)
+		.first()
+		.eager('media(mediaProjection)', {
+			mediaProjection: builder => builder.select(['media.id', 'usage'])
+		});
+	if (event) {
 		const Media = database.getModel('media');
-		const [images, flyers] = await mediaQueries(Media, mimeFilters);
-		res.render('admin/event_form', {title: 'Create event', images, flyers});
+		const [availableImages, availableFlyers] = await mediaQueries(Media, mimeFilters);
+		const images = markSelected(availableImages, getMediaID(event.media, 'image'));
+		const flyers = markSelected(availableFlyers, getMediaID(event.media, 'flyer'));
+		res.render('admin/event_form', {title: 'Update event', event, images, flyers});
+	} else {
+		const err = new Error('Event not found');
+		err.status = 404;
+		next(err);
+	}
+}
+
+async function validateRenderEvent(errors, database, mimeFilters, routeHandles) {
+
+	const res = routeHandles.res;
+
+	if (errors.isEmpty()) {
+		await renderForm(database, mimeFilters, routeHandles);
+	} else {
+		res.redirect('admin/event');
+	}
+}
+
+function renderEvent(database, validationResult, mimeFilters) {
+	return async function (req, res, next) {
+		const errors = validationResult(req);
+		validateRenderEvent(errors, database, mimeFilters, { req, res, next });
 	};
+}
+
+function get(validators, database, mimeFilters) {
+
+	const paramValidator = validators.param;
+	const validationResult = validators.result;
+
+	return [
+		paramValidator.check('id', 'Event id required').isInt(),
+		paramValidator.filter('id').toInt(),
+		renderEvent(database, validationResult, mimeFilters)
+	];
 }
 
 async function eventUpsertTransaction(database, event) {
@@ -76,6 +144,7 @@ function validateEventUpsert(database, validationResult, mimeFilters) {
 		const Media = database.getModel('media');
 
 		const event = {
+			id: req.params.id,
 			title: req.body.title,
 			description: req.body.description,
 			when: req.body.when,
@@ -92,7 +161,7 @@ function validateEventUpsert(database, validationResult, mimeFilters) {
 			const [availableImages, availableFlyers] = await mediaQueries(Media, mimeFilters);
 			const images = markSelected(availableImages, req.body.image);
 			const flyers = markSelected(availableFlyers, req.body.flyer);
-			res.render('admin/event_form', { title: 'Create event', event, images, flyers, errors: errors.mapped() });
+			res.render('admin/event_form', { title: 'Update event', event, images, flyers, errors: errors.mapped() });
 		}
 	};
 }
@@ -115,13 +184,30 @@ function validMediaID(Media, mimeFilter) {
 	};
 }
 
+function checkEventExists(EventModel) {
+	return async function(eventID) {
+		const event = await EventModel
+			.query()
+			.select(['id'])
+			.where('id', eventID)
+			.first();
+		return event ? event.id === eventID : false;
+	};
+}
+
 function post(validators, database, mimeFilters) {
 
 	const bodyValidator = validators.body;
+	const paramValidator = validators.param;
 	const validationResult = validators.result;
 	const MediaModel = database.getModel('media');
+	const EventModel = database.getModel('event');
 
 	return [
+
+		paramValidator.check('id', 'Event id required').isInt(),
+		paramValidator.filter('id').toInt(),
+		paramValidator.check('id', 'Event does not exist').custom(checkEventExists(EventModel)),
 
 		bodyValidator.check('title', 'Event title required').isLength({ min: 1 }).trim(),
 		bodyValidator.filter('title').trim(),
@@ -156,7 +242,7 @@ function post(validators, database, mimeFilters) {
 
 function controller(validators, database, mimeFilters) {
 	return {
-		get: get(database, mimeFilters),
+		get: get(validators, database, mimeFilters),
 		post: post(validators, database, mimeFilters)
 	};
 }

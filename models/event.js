@@ -44,44 +44,6 @@ function eventModel(BaseModel) {
 						to: 'media.id'
 					}
 				},
-				flyer: {
-					relation: BaseModel.HasOneThroughRelation,
-					modelClass: this.modelClass('media'),
-					join: {
-						from: 'event.id',
-						// ManyToMany relation needs the `through` object
-						// to describe the join table.
-						through: {
-							// If you have a model class for the join table
-							// you need to specify it like this:
-							modelClass: this.modelClass('event_media'),
-							from: 'event_media.event_id',
-							to: 'event_media.media_id',
-							extra: ['usage'],
-							filter: query => query.where('usage','flyer')
-						},
-						to: 'media.id'
-					}
-				},
-				image: {
-					relation: BaseModel.HasOneThroughRelation,
-					modelClass: this.modelClass('media'),
-					join: {
-						from: 'event.id',
-						// ManyToMany relation needs the `through` object
-						// to describe the join table.
-						through: {
-							// If you have a model class for the join table
-							// you need to specify it like this:
-							modelClass: this.modelClass('event_media'),
-							from: 'event_media.event_id',
-							to: 'event_media.media_id',
-							extra: ['usage'],
-							filter: query => query.where('usage','image')
-						},
-						to: 'media.id'
-					}
-				},
 				event_media: {
 					relation: BaseModel.HasManyRelation,
 					modelClass: this.modelClass('event_media'),

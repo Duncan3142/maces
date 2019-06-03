@@ -2,7 +2,7 @@ extends ../layout
 
 mixin eventView(event)
 	h2
-		a(href='') #{event.title}
+		a(href=`/admin/event/${event.id}/update`) #{event.title}
 	p= event.location
 	p= event.when
 	- descriptionParas = event.description.split('\n')
