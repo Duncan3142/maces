@@ -1,38 +1,21 @@
-function selectQuery(Event) {
-	return Event.query()
-		.select([
-			'event.id',
-			'event.title',
-			'event.description',
-			'event.when',
-			'event.location',
-			'event.start',
-			'event.end',
-		])
-		.orderBy('start')
-		.eager('media(mediaProjection)', {
-			mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type', 'usage'])
-		});
-}
-
-async function render(Event, res, next) {
+async function render(queries, res, next) {
 	try {
-		const events = await selectQuery(Event);
+		const eventQueries = queries.event;
+		const events = await eventQueries.list();
 		res.render('admin/event', { title: 'Macmillan East Sheen Home', events });
 	} catch(err) {
 		next(err);
 	}
 }
 
-function list(database) {
+function list(queries) {
 	return async function(req, res, next) {
-		const Event = database.getModel('event');
-		await render(Event, res, next);
+		await render(queries, res, next);
 	};
 }
 
-function controller(database) {
-	return list(database);
+function controller(queries) {
+	return list(queries);
 }
 
 module.exports = controller;

@@ -48,11 +48,12 @@ const indexRouter = require('./routes/index')(express, indexController);
 
 const mediaQuery = require('./controllers/media/query')(database, mimeTypesConfig);
 const eventQuery = require('./controllers/event/query')(database);
+
 const eventUpsert = require('./controllers/event/upsert')({body: bodyValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
 const eventCreate = require('./controllers/event/create')(eventUpsert, {media: mediaQuery});
-const eventUpdate = require('./controllers/event/update')(eventUpsert, {param: paramValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
-const eventList = require('./controllers/event/list')(database);
-const eventRemove = require('./controllers/event/remove')(database, {param: paramValidator, result: validationResult});
+const eventUpdate = require('./controllers/event/update')({param: paramValidator, result: validationResult}, eventUpsert, {event: eventQuery, media: mediaQuery});
+const eventList = require('./controllers/event/list')({event: eventQuery});
+const eventRemove = require('./controllers/event/remove')({param: paramValidator, result: validationResult}, {event: eventQuery});
 const eventController = require('./controllers/event/index')(eventList, eventCreate, eventUpdate, eventRemove);
 const eventRouter = require('./routes/event')(express, eventController);
 

@@ -53,7 +53,7 @@ function get(validators, queries) {
 	];
 }
 
-function post(upsert, validators, queries) {
+function post(validators, upsert, queries) {
 
 	const paramValidator = validators.param;
 	const eventQueries = queries.event;
@@ -73,10 +73,10 @@ function post(upsert, validators, queries) {
 	];
 }
 
-function controller(upsert, validators, queries) {
+function controller(validators, upsert, queries) {
 	return {
 		get: get(validators, queries),
-		post: post(upsert, validators, queries)
+		post: post(validators, upsert, queries)
 	};
 }
 
