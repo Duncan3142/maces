@@ -93,7 +93,7 @@ function post(multer, validators, database, mimeTypes) {
 }
 
 function flattenMimeFilters(mimeFilters) {
-	return [].concat(mimeFilters.images).concat(mimeFilters.documents);
+	return [].concat(mimeFilters.image).concat(mimeFilters.flyer);
 }
 
 function controller(multer, validators, database, mimeFilters) {

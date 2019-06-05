@@ -17,9 +17,9 @@ const objection = require('objection');
 const Model = objection.Model;
 Model.knex(knex);
 
-function JSONConfig(path) {
-	return JSON.parse(fs.readFileSync(path, 'utf8'));
-}
+const mapped = require('./utils/mapped');
+
+const JSONConfig = require('./config/json')(fs, mapped);
 
 const modelConfig = JSONConfig('./models/models.json');
 const mimeTypesConfig = JSONConfig('./models/mimeTypes.json');
@@ -46,8 +46,11 @@ const fileValidator = require('./validators/file')(buildCheckFunction, buildSani
 const indexController = require('./controllers/index')(database);
 const indexRouter = require('./routes/index')(express, indexController);
 
-const eventCreate = require('./controllers/event/create')({body: bodyValidator, result: validationResult}, database, mimeTypesConfig);
-const eventUpdate = require('./controllers/event/update')({body: bodyValidator, param: paramValidator, result: validationResult}, database, mimeTypesConfig);
+const mediaQuery = require('./controllers/media/query')(database, mimeTypesConfig);
+const eventQuery = require('./controllers/event/query')(database);
+const eventUpsert = require('./controllers/event/upsert')({body: bodyValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
+const eventCreate = require('./controllers/event/create')(eventUpsert, {media: mediaQuery});
+const eventUpdate = require('./controllers/event/update')(eventUpsert, {param: paramValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
 const eventList = require('./controllers/event/list')(database);
 const eventRemove = require('./controllers/event/remove')(database, {param: paramValidator, result: validationResult});
 const eventController = require('./controllers/event/index')(eventList, eventCreate, eventUpdate, eventRemove);

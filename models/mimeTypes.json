@@ -1,4 +1,4 @@
 {
-	"images": ["image/jpeg", "image/png"],
-	"documents": ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/pdf"]
+	"image": ["image/jpeg", "image/png"],
+	"flyer": ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/pdf"]
 }
