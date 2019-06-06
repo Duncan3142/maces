@@ -93,13 +93,18 @@ function post(multer, validators, queries, mimeTypes) {
 	];
 }
 
-function flattenMimeFilters(mimeFilters) {
-	return [].concat(mimeFilters.image).concat(mimeFilters.flyer);
+function flattenMimeTypes(mimeFilters, required) {
+	return required.reduce((acc, type) => {
+		if (mimeFilters[type]) {
+			acc = acc.concat(mimeFilters[type]);
+		}
+		return acc;
+	}, []);
 }
 
 function controller(multer, validators, queries, mimeFilters) {
 
-	const mimeTypes = flattenMimeFilters(mimeFilters);
+	const mimeTypes = flattenMimeTypes(mimeFilters, ['image', 'flyer']);
 
 	return {
 		get: get(mimeTypes),
