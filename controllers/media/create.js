@@ -1,6 +1,6 @@
 function get(mimeTypes) {
 	return function(req, res) {
-		res.render('admin/media_form', {title: 'Upload media', mimeTypes});
+		res.render('admin/media_create', {title: 'Upload media', mimeTypes});
 	};
 }
 
@@ -22,7 +22,7 @@ function validateFileUpsert(validationResult, queries, mimeTypes) {
 		const errors = validationResult(req);
 
 		if (errors.isEmpty()) {
-			const mediaData = {
+			const media = {
 				description: req.body.description,
 				link_text: req.body.link_text,
 				name: req.file.originalname,
@@ -31,16 +31,16 @@ function validateFileUpsert(validationResult, queries, mimeTypes) {
 			};
 
 			const mediaQueries = queries.media;
-			const upsertQuery = mediaQueries.upsert(mediaData);
+			const upsertQuery = mediaQueries.upsert(media);
 
 			await upsertMedia(upsertQuery, { req, res, next });
 		} else {
-			const mediaData = {
+			const media = {
 				description: req.body.description,
 				link_text: req.body.link_text,
 			};
 			// There are errors. Render the form again with sanitized values/error messages.
-			res.render('admin/media_form', { title: 'Upload media', mimeTypes, mediaData, errors: errors.mapped() });
+			res.render('admin/media_create', { title: 'Upload media', mimeTypes, media, errors: errors.mapped() });
 		}
 	};
 }

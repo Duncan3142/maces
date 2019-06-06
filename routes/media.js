@@ -16,6 +16,12 @@ function mediaRouter(express, controller) {
 	// POST request for creating media.
 	router.post('/:id/delete', controller.remove);
 
+	// GET request for updating Event.
+	router.get('/:id/update', controller.update_get);
+
+	// POST request for updating Event.
+	router.post('/:id/update', controller.update_post);
+
 	return router;
 }
 

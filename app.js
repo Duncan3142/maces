@@ -58,9 +58,10 @@ const eventController = require('./controllers/event/index')(eventList, eventCre
 const eventRouter = require('./routes/event')(express, eventController);
 
 const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, {media: mediaQuery}, mimeTypesConfig);
+const mediaUpdate = require('./controllers/media/update')({param: paramValidator, body: bodyValidator, result: validationResult}, {media: mediaQuery});
 const mediaList = require('./controllers/media/list')({media: mediaQuery});
 const mediaRemove = require('./controllers/media/remove')({param: paramValidator, result: validationResult}, {media: mediaQuery});
-const mediaController = require('./controllers/media/index')(mediaList, mediaCreate, mediaRemove);
+const mediaController = require('./controllers/media/index')(mediaList, mediaCreate, mediaUpdate, mediaRemove);
 const mediaRouter = require('./routes/media')(express, mediaController);
 
 const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});

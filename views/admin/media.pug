@@ -2,7 +2,7 @@ extends /layout
 
 mixin mediaView(media)
 	h2
-		a(href='') #{media.description}
+		a(href=`/admin/media/${media.id}/update`) #{media.description}
 	p= media.link_text
 	p= media.type
 	p= media.name

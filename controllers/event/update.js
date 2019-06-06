@@ -53,10 +53,9 @@ function get(validators, queries) {
 	];
 }
 
-function post(validators, upsert, queries) {
+function post(validators, upsert) {
 
 	const paramValidator = validators.param;
-	const eventQueries = queries.event;
 
 	const fields = ['id','title','description','when','location','start','end','media'];
 
@@ -64,7 +63,6 @@ function post(validators, upsert, queries) {
 
 		paramValidator.check('id', 'Event id required').isInt(),
 		paramValidator.filter('id').toInt(),
-		paramValidator.check('id', 'Event does not exist').custom(eventQueries.exists),
 
 		// Generic validators
 		...upsert.validators,
@@ -76,7 +74,7 @@ function post(validators, upsert, queries) {
 function controller(validators, upsert, queries) {
 	return {
 		get: get(validators, queries),
-		post: post(validators, upsert, queries)
+		post: post(validators, upsert)
 	};
 }
 

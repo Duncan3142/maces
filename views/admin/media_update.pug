@@ -1,0 +1,20 @@
+extends /layout
+
+include /validation
+
+block content
+	h1 #{title}
+
+	+pleaseCorrect()
+
+	form(method='POST' action='')
+		div
+			div
+				label(for='description') Description:
+				input#description(type='text', placeholder='' name='description' value=(media ? media.description : '') required='true')
+				+errorList(['description'])
+			div
+				label(for='linkText') Link Text:
+				input#linkText(type='text', placeholder='' name='link_text' value=(media ? media.link_text : '') required='true')
+				+errorList(['link_text'])
+		button(type='submit') Submit

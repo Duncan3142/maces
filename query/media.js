@@ -133,6 +133,23 @@ function upsertTransaction(database) {
 	};
 }
 
+function fetch(database) {
+	const MediaModel = database.getModel('media');
+	return function(mediaID) {
+		return MediaModel
+			.query()
+			.select([
+				'id',
+				'name',
+				'description',
+				'link_text',
+				'type'
+			])
+			.where('id', mediaID)
+			.first();
+	};
+}
+
 function controller(database, mimeFilters) {
 	const getter = get(database, mimeFilters);
 	return {
@@ -141,7 +158,8 @@ function controller(database, mimeFilters) {
 		selected: selectAll(getter),
 		validID: validMediaID(database, mimeFilters),
 		list: list(database),
-		delete: deleteTransaction(database)
+		delete: deleteTransaction(database),
+		fetch: fetch(database)
 	};
 }
 
