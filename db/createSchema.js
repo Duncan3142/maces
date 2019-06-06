@@ -26,6 +26,7 @@ function createMedia(db) {
 	return db.schema.createTable('media', function (table) {
 		table.increments('id');
 		table.string('description');
+		table.string('link_text');
 		table.string('name');
 		table.string('type');
 		table.binary('file');

@@ -7,11 +7,27 @@ function mediaQuery(database) {
 				'id',
 				'name',
 				'description',
+				'link_text',
 				'type'
 			])
 			.whereIn('type', mimeFilter)
 			.orderBy(['type', 'name']);
-	}
+	};
+}
+
+function list(database) {
+	const MediaModel = database.getModel('media');
+	return function() {
+		return MediaModel.query()
+			.select([
+				'id',
+				'name',
+				'description',
+				'link_text',
+				'type'
+			])
+			.orderBy(['type', 'name']);
+	};
 }
 
 function get(database, mimeFilters) {
@@ -48,8 +64,8 @@ function selectAll(getter) {
 }
 
 function checkMediaExists(database, mimeFilter) {
+	const MediaModel = database.getModel('media');
 	return async function(mediaID) {
-		const MediaModel = database.getModel('media');
 		const media = await MediaModel
 			.query()
 			.select(['id'])
@@ -73,14 +89,60 @@ function validMediaID(database, mimeFilters) {
 	};
 }
 
+async function deleteGraph(MediaModel, trnx, mediaID) {
+	const media = await MediaModel.query(trnx).findById(mediaID);
+	if (media) {
+		await media.$relatedQuery('event', trnx).unrelate();
+		await MediaModel.query(trnx).deleteById(mediaID);
+	}
+}
+
+function deleteTransaction(database) {
+	const MediaModel = database.getModel('media');
+	return function(mediaID) {
+		return async function() {
+			const trnx = await database.startTransaction();
+			try {
+				await deleteGraph(MediaModel, trnx, mediaID);
+				return trnx.commit();
+			} catch(err) {
+				return trnx.rollback(err);
+			}
+		};
+	};
+}
+
+function upsertTransaction(database) {
+	const MediaModel = database.getModel('media');
+	return function(media) {
+		return async function() {
+			const trnx = await database.startTransaction();
+			try {
+				await MediaModel
+					.query(trnx)
+					.upsertGraph(media,
+						{
+							relate: true,
+							unrelate: true
+						});
+				return trnx.commit();
+			} catch (err) {
+				return trnx.rollback(err);
+			}
+		};
+	};
+}
+
 function controller(database, mimeFilters) {
 	const getter = get(database, mimeFilters);
 	return {
+		upsert: upsertTransaction(database),
 		available: getAll(getter),
 		selected: selectAll(getter),
-		validID: validMediaID(database, mimeFilters)
+		validID: validMediaID(database, mimeFilters),
+		list: list(database),
+		delete: deleteTransaction(database)
 	};
-
 }
 
 module.exports = controller;

@@ -4,53 +4,48 @@ function get(mimeTypes) {
 	};
 }
 
-function mediaInsertQuery(Media, data) {
-	return Media
-		.query()
-		.insert(data);
-}
-
-async function insertMedia(Media, data, res, next) {
+async function upsertMedia(upsertQuery, routeHandles) {
+	const res = routeHandles.res;
+	const next = routeHandles.next;
 	try {
-		await mediaInsertQuery(Media, data);
+		await upsertQuery();
 		res.redirect('/admin/media');
 	} catch (err) {
 		next(err);
 	}
 }
 
-async function validateFileCreate(mimeTypes, errors, Media, req, res, next) {
-
-	if (errors.isEmpty()) {
-		const data = {
-			description: req.body.description,
-			name: req.file.originalname,
-			type: req.file.mimetype,
-			file: req.file.buffer
-		};
-
-		await insertMedia(Media, data, res, next);
-	} else {
-		const data = {
-			description: req.body.description
-		};
-		// There are errors. Render the form again with sanitized values/error messages.
-		res.render('admin/media_form', { title: 'Upload media', mimeTypes, data, errors: errors.mapped() });
-	}
-}
-
-function createFile(database, validationResult, mimeTypes) {
+function validateFileUpsert(validationResult, queries, mimeTypes) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
 		const errors = validationResult(req);
-		const Media = database.getModel('media');
 
-		await validateFileCreate(mimeTypes, errors, Media, req, res, next);
+		if (errors.isEmpty()) {
+			const mediaData = {
+				description: req.body.description,
+				link_text: req.body.link_text,
+				name: req.file.originalname,
+				type: req.file.mimetype,
+				file: req.file.buffer
+			};
+
+			const mediaQueries = queries.media;
+			const upsertQuery = mediaQueries.upsert(mediaData);
+
+			await upsertMedia(upsertQuery, { req, res, next });
+		} else {
+			const mediaData = {
+				description: req.body.description,
+				link_text: req.body.link_text,
+			};
+			// There are errors. Render the form again with sanitized values/error messages.
+			res.render('admin/media_form', { title: 'Upload media', mimeTypes, mediaData, errors: errors.mapped() });
+		}
 	};
 }
 
-function post(multer, validators, database, mimeTypes) {
+function post(multer, validators, queries, mimeTypes) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
@@ -73,6 +68,9 @@ function post(multer, validators, database, mimeTypes) {
 		// Validate that the description field is not empty.
 		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
 
+		// Validate that the description field is not empty.
+		bodyValidator.check('link_text', 'Link text required').isLength({ min: 1 }).trim(),
+
 		// Validate mime type.
 		fileValidator.check('mimetype')
 			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`)
@@ -87,8 +85,11 @@ function post(multer, validators, database, mimeTypes) {
 		// Sanitize (trim) the description field.
 		bodyValidator.filter('description').trim(),
 
+		// Sanitize (trim) the link text field.
+		bodyValidator.filter('link_text').trim(),
+
 		// Process request after validation and sanitization.
-		createFile(database, validationResult, mimeTypes)
+		validateFileUpsert(validationResult, queries, mimeTypes)
 	];
 }
 
@@ -96,13 +97,13 @@ function flattenMimeFilters(mimeFilters) {
 	return [].concat(mimeFilters.image).concat(mimeFilters.flyer);
 }
 
-function controller(multer, validators, database, mimeFilters) {
+function controller(multer, validators, queries, mimeFilters) {
 
 	const mimeTypes = flattenMimeFilters(mimeFilters);
 
 	return {
 		get: get(mimeTypes),
-		post: post(multer, validators, database, mimeTypes)
+		post: post(multer, validators, queries, mimeTypes)
 	};
 }
 

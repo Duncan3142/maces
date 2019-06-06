@@ -10,8 +10,8 @@ const db = knex({
 });
 
 
-function mediaInsert(db, description, name, type, fileName) {
-	return db('media').insert({description, name, type, file: fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`))}).returning('id');
+function mediaInsert(db, description, link_text, name, type, fileName) {
+	return db('media').insert({description, link_text, name, type, file: fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`))}).returning('id');
 }
 
 function eventInsert(db, title, description, when, location, start, end) {
@@ -31,9 +31,9 @@ async function populate(db) {
 		await deleteData(db);
 		const [mediaIDs, eventIDs] = await Promise.all([
 			Promise.all([
-				mediaInsert(db, 'A committee image', 'committee.jpg', 'image/jpeg', 'committee.jpg'),
-				mediaInsert(db, 'A header image', 'header.jpg', 'image/jpeg', 'header.jpg'),
-				mediaInsert(db, 'A guide document', 'guide.pdf', 'application/pdf', 'guide.pdf')
+				mediaInsert(db, 'A committee image', 'An image of the committe', 'committee.jpg', 'image/jpeg', 'committee.jpg'),
+				mediaInsert(db, 'A header image', 'A header image', 'header.jpg', 'image/jpeg', 'header.jpg'),
+				mediaInsert(db, 'A guide document', 'Please see guide for more details', 'guide.pdf', 'application/pdf', 'guide.pdf')
 			]),
 			Promise.all([
 				eventInsert(db, 'Coffee morn', 'A coffee morning', 'May 12th', 'Tower House', new Date(2019, 7, 12), new Date(2019, 7, 12)),

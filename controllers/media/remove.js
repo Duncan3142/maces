@@ -1,66 +1,40 @@
-async function deleteMediaGraph(MediaModel, trnx, mediaID) {
-	const media = await MediaModel.query(trnx).findById(mediaID);
-	if (media) {
-		await media.$relatedQuery('event', trnx).unrelate();
-		await MediaModel.query(trnx).deleteById(mediaID);
-	}
-}
-
-async function deleteMediaTransaction(database, mediaID) {
-	const MediaModel = database.getModel('media');
-	const trnx = await database.startTransaction();
-	try {
-		await deleteMediaGraph(MediaModel, trnx, mediaID);
-		return trnx.commit();
-	} catch(err) {
-		return trnx.rollback(err);
-	}
-}
-
-async function deleteMedia(database, mediaID, routeHandles) {
+async function deleteMedia(deleteQuery, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;
 	try {
-		await deleteMediaTransaction(database, mediaID);
+		await deleteQuery();
 		res.redirect('/admin/media');
 	} catch(err) {
 		next(err);
 	}
 }
 
-async function validateRemoveMedia(errors, database, routeHandles) {
-
-	const req = routeHandles.req;
-	const res = routeHandles.res;
-
-	if (errors.isEmpty()) {
-		await deleteMedia(database, req.params.id, routeHandles);
-	} else {
-		res.redirect('/admin/media');
-	}
-}
-
-function removeMedia(database, validationResult) {
+function removeMedia(validationResult, queries) {
 	return async function(req, res, next) {
 		const errors = validationResult(req);
-		await validateRemoveMedia(errors, database, { req, res, next });
+		if (errors.isEmpty()) {
+			const mediaQueries = queries.media;
+			const deleteQuery = mediaQueries.delete(req.params.id);
+			await deleteMedia(deleteQuery, { req, res, next });
+		} else {
+			res.redirect('/admin/media');
+		}
 	};
 }
 
-function remove(database, validators) {
-
+function remove(validators, queries) {
 	const paramValidator = validators.param;
 	const validationResult = validators.result;
 
 	return [
 		paramValidator.check('id', 'ID must be an integer').isInt(),
 		paramValidator.filter('id').toInt(),
-		removeMedia(database, validationResult)
+		removeMedia(validationResult, queries)
 	];
 }
 
-function controller(database, validators) {
-	return remove(database, validators);
+function controller(validators, queries) {
+	return remove(validators, queries);
 }
 
 module.exports = controller;

@@ -12,6 +12,7 @@ mixin eventView(event)
 		ul
 			li
 				p= media.description
+				p= media.link_text
 				p= media.usage
 	form(method='POST' action=`/admin/event/${event.id}/delete`)
 		div

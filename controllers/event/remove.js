@@ -12,7 +12,6 @@ async function deleteEvent(deleteQuery, routeHandles) {
 function removeEvent(validationResult, queries) {
 	return async function(req, res, next) {
 		const errors = validationResult(req);
-
 		if (errors.isEmpty()) {
 			const eventQueries = queries.event;
 			const deleteQuery = eventQueries.delete(req.params.id);

@@ -68,7 +68,7 @@ function list(database) {
 			])
 			.orderBy('start')
 			.eager('media(mediaProjection)', {
-				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type', 'usage'])
+				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type', 'media.link_text', 'usage'])
 			});
 	}
 }
@@ -82,9 +82,9 @@ async function deleteGraph(EventModel, trnx, eventID) {
 }
 
 function deleteTransaction(database) {
+	const EventModel = database.getModel('event');
 	return function(eventID) {
 		return async function() {
-			const EventModel = database.getModel('event');
 			const trnx = await database.startTransaction();
 			try {
 				await deleteGraph(EventModel, trnx, eventID);

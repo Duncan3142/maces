@@ -46,8 +46,8 @@ const fileValidator = require('./validators/file')(buildCheckFunction, buildSani
 const indexController = require('./controllers/index')(database);
 const indexRouter = require('./routes/index')(express, indexController);
 
-const mediaQuery = require('./controllers/media/query')(database, mimeTypesConfig);
-const eventQuery = require('./controllers/event/query')(database);
+const mediaQuery = require('./query/media')(database, mimeTypesConfig);
+const eventQuery = require('./query/event')(database);
 
 const eventUpsert = require('./controllers/event/upsert')({body: bodyValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
 const eventCreate = require('./controllers/event/create')(eventUpsert, {media: mediaQuery});
@@ -57,9 +57,9 @@ const eventRemove = require('./controllers/event/remove')({param: paramValidator
 const eventController = require('./controllers/event/index')(eventList, eventCreate, eventUpdate, eventRemove);
 const eventRouter = require('./routes/event')(express, eventController);
 
-const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, database, mimeTypesConfig);
-const mediaList = require('./controllers/media/list')(database);
-const mediaRemove = require('./controllers/media/remove')(database, {param: paramValidator, result: validationResult});
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, {media: mediaQuery}, mimeTypesConfig);
+const mediaList = require('./controllers/media/list')({media: mediaQuery});
+const mediaRemove = require('./controllers/media/remove')({param: paramValidator, result: validationResult}, {media: mediaQuery});
 const mediaController = require('./controllers/media/index')(mediaList, mediaCreate, mediaRemove);
 const mediaRouter = require('./routes/media')(express, mediaController);
 

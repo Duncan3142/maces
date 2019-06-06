@@ -37,11 +37,10 @@ function validateEventUpsert(validationResult, queries) {
 
 			const eventData = getEventData(req, fields);
 
-			const eventQueries = queries.event;
-			const upsertQuery = eventQueries.upsert(eventData);
-
 			if (errors.isEmpty()) {
-				await upsertEvent(upsertQuery, {req, res, next});
+				const eventQueries = queries.event;
+				const upsertQuery = eventQueries.upsert(eventData);
+				await upsertEvent(upsertQuery, { req, res, next });
 			} else {
 				const mediaQueries = queries.media;
 				// There are errors. Render the form again with sanitized values/error messages.
