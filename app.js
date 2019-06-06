@@ -72,6 +72,8 @@ app.locals.moment = require('moment');
 // view engine setup
 app.set('views', './views');
 app.set('view engine', 'pug');
+// allow absolute paths in pug templates
+app.locals.basedir = app.get('views');
 
 // middlewares
 app.use(logger('dev'));
