@@ -4,11 +4,19 @@ const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
 const connection = require('./connection.js');
+const crypto = require('crypto');
+const adminAuth = require('../controllers/admin/auth')(crypto);
 const db = knex({
 	client: 'pg',
 	connection
 });
 
+function adminInsert(db, adminAuth, email, password) {
+	const auth = adminAuth({email});
+	auth.setPassword(password);
+	const authedAdmin = auth.getAdmin();
+	return db('admin').insert({email: authedAdmin.email, salt: authedAdmin.salt, hash: authedAdmin.hash});
+}
 
 function mediaInsert(db, description, link_text, name, type, fileName) {
 	return db('media').insert({description, link_text, name, type, file: fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`))}).returning('id');
@@ -23,7 +31,7 @@ function eventMediaInsert(db, event_id, media_id, usage) {
 }
 
 function deleteData(db) {
-	return db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete()]));
+	return db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete(), db('admin').delete()]));
 }
 
 async function populate(db) {
@@ -39,7 +47,8 @@ async function populate(db) {
 				eventInsert(db, 'Coffee morn', 'A coffee morning', 'May 12th', 'Tower House', new Date(2019, 7, 12), new Date(2019, 7, 12)),
 				eventInsert(db, 'Bridge', 'A bridge game', 'June 1st', 'Jan Wright\'s', new Date(2019, 8, 1), new Date(2019, 8, 1)),
 				eventInsert(db, 'Garden sale','A garden plant sale', 'July 23rd - July 25th', 'Sheen Lane Centre', new Date(2019, 9, 23),new Date(2019, 9, 25))
-			])
+			]),
+			adminInsert(db, adminAuth, 'admin@maces.com', process.env.MACES_ADMIN_PASSWORD)
 		]);
 		await Promise.all([
 			eventMediaInsert(db, eventIDs[0][0], mediaIDs[2][0], 'flyer'),

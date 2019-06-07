@@ -2,8 +2,12 @@
 
 const createError = require('http-errors');
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const logger = require('morgan');
+const helmet = require('helmet');
+const crypto = require('crypto');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 
 //Set up pg connection
 const fs = require('fs');
@@ -16,6 +20,12 @@ const knex = require('knex')({
 const objection = require('objection');
 const Model = objection.Model;
 Model.knex(knex);
+
+const KnexSessionStore = require('connect-session-knex')(session);
+
+const store = new KnexSessionStore({
+	knex: knex
+});
 
 const mapped = require('./utils/mapped');
 
@@ -48,6 +58,13 @@ const indexRouter = require('./routes/index')(express, indexController);
 
 const mediaQuery = require('./query/media')(database, mimeTypesConfig);
 const eventQuery = require('./query/event')(database);
+const adminQuery = require('./query/admin')(database);
+
+const adminAuth = require('./controllers/admin/auth')(crypto);
+require('./controllers/auth/local')(LocalStrategy, passport, adminAuth, adminQuery);
+
+const loginController = require('./controllers/login')(passport);
+const loginRouter = require('./routes/login')(express, loginController);
 
 const eventUpsert = require('./controllers/event/upsert')({body: bodyValidator, result: validationResult}, {event: eventQuery, media: mediaQuery});
 const eventCreate = require('./controllers/event/create')(eventUpsert, {media: mediaQuery});
@@ -66,25 +83,34 @@ const mediaRouter = require('./routes/media')(express, mediaController);
 
 const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});
 
+function addLocal(name, value) {
+	app.locals[name] = value;
+}
+
 const app = express();
 
-app.locals.moment = require('moment');
+app.use(helmet());
+
+addLocal('moment', require('moment'));
 
 // view engine setup
 app.set('views', './views');
 app.set('view engine', 'pug');
 // allow absolute paths in pug templates
-app.locals.basedir = app.get('views');
+addLocal('basedir', app.get('views'));
 
 // middlewares
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 86400000 }, resave: false, saveUninitialized: false, store: store }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static('./public'));
 
 // routes
 app.use('/', indexRouter);
+app.use('/login', loginRouter);
 app.use('/admin', adminRouter);
 
 // error handlers

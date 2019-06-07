@@ -1,0 +1,14 @@
+extends /layout
+
+block content
+	h1 #{title}
+
+	form(method='POST' action='')
+		div
+			div
+				label(for='username') User Name:
+				input#username(type='text' placeholder='' name='username' value='' required='true')
+			div
+				label(for='password') Password:
+				input#password(type='text' placeholder='' name='password' value='' required='true')
+		button(type='submit') Login
