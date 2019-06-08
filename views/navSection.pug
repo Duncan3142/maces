@@ -1,0 +1,6 @@
+mixin navSection(title, links)
+	p= title
+	nav
+		each link in links
+			span
+				a(href=link.url) #{link.name}

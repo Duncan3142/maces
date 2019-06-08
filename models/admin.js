@@ -14,7 +14,6 @@ function adminModel(BaseModel) {
 
 				properties: {
 					email: {type: 'string', format: 'email'},
-					salt: {type: 'string'},
 					hash: {type: 'string'}
 				}
 			};

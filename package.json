@@ -8,6 +8,7 @@
     "populate": "node populate"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "connect-session-knex": "^1.4.0",
     "cookie-parser": "^1.4.3",
     "debug": "^4.1.1",

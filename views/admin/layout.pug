@@ -11,26 +11,15 @@ html(lang='en')
 	body
 		div.main-nav
 			block mainNav
-				+navSection('Navigation',[
+				+navSection('Admin',[
 					{url: '/', name: 'Home'},
-					{url: '/about', name: 'About Us'},
-					{url: '/history', name: 'History'},
-					{url: '/thanks', name: 'Thanks'},
-					{url: '/photos', name: 'Photos'}
-				])
-				hr
-				+navSection('Friends',[
-					{url: 'http://macmillanchiswick.com', name: 'Macmillan Chiswick'},
-					{url: 'http://macmillanmerton.com', name: 'Macmillan Merton'}
-				])
-				hr
-				+navSection('Contact',[
-					{url: 'mailto:macmillan.sheen@gmail.com', name: 'Send us an email'}
+					{url: '/admin/event', name: 'Events'},
+					{url: '/admin/event/create', name: 'Create event'},
+					{url: '/admin/media', name: 'Media'},
+					{url: '/admin/media/create', name: 'Upload media'}
 				])
 
 		div
 			block content
 		div
 			block footer
-					footer
-						a(href='/admin') Admin

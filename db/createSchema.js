@@ -11,8 +11,7 @@ function createAdmin(db) {
 	return db.schema.createTable('admin', function (table) {
 		table.increments('id');
 		table.string('email');
-		table.string('salt', 1024);
-		table.string('hash', 1024);
+		table.string('hash');
 	});
 }
 

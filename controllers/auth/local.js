@@ -21,8 +21,8 @@ function config(LocalStrategy, passport, adminAuth, adminQueries) {
 	passport.use(new LocalStrategy(
 		(username, password, done) => {
 			adminQueries.fetch({ field: 'email', value: username })
-				.then((admin) => {
-					return auth(admin, password) ? done(null, admin) : done(null, false, { errors: { 'email or password': 'is invalid' } });
+				.then(async (admin) => {
+					return (await auth(admin, password)) ? done(null, admin) : done(null, false, { errors: { 'email or password': 'is invalid' } });
 				})
 				.catch(done);
 		}

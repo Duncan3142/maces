@@ -4,18 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
 const connection = require('./connection.js');
-const crypto = require('crypto');
-const adminAuth = require('../controllers/admin/auth')(crypto);
+const bcrypt = require('bcrypt');
+const adminAuth = require('../controllers/admin/auth')(bcrypt);
 const db = knex({
 	client: 'pg',
 	connection
 });
 
-function adminInsert(db, adminAuth, email, password) {
-	const auth = adminAuth({email});
-	auth.setPassword(password);
-	const authedAdmin = auth.getAdmin();
-	return db('admin').insert({email: authedAdmin.email, salt: authedAdmin.salt, hash: authedAdmin.hash});
+async function adminInsert(db, adminAuth, email, password) {
+	const admin = {email};
+	await adminAuth(admin).setPassword(password);
+	return db('admin').insert(admin);
 }
 
 function mediaInsert(db, description, link_text, name, type, fileName) {

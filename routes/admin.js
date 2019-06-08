@@ -8,11 +8,13 @@ function isLoggedIn(req, res, next) {
 	}
 }
 
-function router(express, routes) {
+function router(express, controller, routes) {
 
 	const router = express.Router();
 
 	router.use(isLoggedIn);
+
+	router.get('/', controller.index);
 
 	router.use('/event', routes.event);
 

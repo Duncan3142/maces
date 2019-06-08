@@ -5,7 +5,7 @@ const express = require('express');
 const session = require('express-session');
 const logger = require('morgan');
 const helmet = require('helmet');
-const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
@@ -60,7 +60,7 @@ const mediaQuery = require('./query/media')(database, mimeTypesConfig);
 const eventQuery = require('./query/event')(database);
 const adminQuery = require('./query/admin')(database);
 
-const adminAuth = require('./controllers/admin/auth')(crypto);
+const adminAuth = require('./controllers/admin/auth')(bcrypt);
 require('./controllers/auth/local')(LocalStrategy, passport, adminAuth, adminQuery);
 
 const loginController = require('./controllers/login')(passport);
@@ -81,7 +81,8 @@ const mediaRemove = require('./controllers/media/remove')({param: paramValidator
 const mediaController = require('./controllers/media/index')(mediaList, mediaCreate, mediaUpdate, mediaRemove);
 const mediaRouter = require('./routes/media')(express, mediaController);
 
-const adminRouter = require('./routes/admin')(express, {event: eventRouter, media: mediaRouter});
+const adminController = require('./controllers/admin/index')();
+const adminRouter = require('./routes/admin')(express, adminController, {event: eventRouter, media: mediaRouter});
 
 function addLocal(name, value) {
 	app.locals[name] = value;
