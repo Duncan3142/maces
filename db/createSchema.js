@@ -37,6 +37,7 @@ function createMedia(db) {
 		table.text('name');
 		table.text('type');
 		table.binary('file');
+		table.text('hash');
 	});
 }
 

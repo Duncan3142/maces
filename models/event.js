@@ -3,6 +3,15 @@
 function eventModel(BaseModel) {
 
 	class Event extends BaseModel {
+
+		image() {
+			return this.media.find(media => media.usage === 'image');
+		}
+
+		flyer() {
+			return this.media.find(media => media.usage === 'flyer');
+		}
+
 		static get tableName() {
 			return 'event';
 		}

@@ -10,14 +10,15 @@ function mediaModel(BaseModel) {
 		static get jsonSchema() {
 			return {
 				type: 'object',
-				required: ['description', 'name', 'type', 'file'],
+				required: ['description', 'name', 'type', 'file', 'hash'],
 
 				properties: {
 					id: {type: 'integer'},
 					description: {type: 'string', minLength: 1},
 					name: {type: 'string', minLength: 1},
 					type: {type: 'string', minLength: 1},
-					file: {class: 'buffer'}
+					file: {class: 'buffer'},
+					hash: {type: 'string', minLength: 1}
 				}
 			};
 		}

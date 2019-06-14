@@ -6,6 +6,7 @@ const session = require('express-session');
 const logger = require('morgan');
 const helmet = require('helmet');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
@@ -57,7 +58,7 @@ const mediaQuery = require('./query/media')(database, mimeTypesConfig);
 const eventQuery = require('./query/event')(database);
 const adminQuery = require('./query/admin')(database);
 
-const indexController = require('./controllers/index')(eventQuery);
+const indexController = require('./controllers/index')({event: eventQuery, media: mediaQuery});
 const indexRouter = require('./routes/index')(express, indexController);
 
 const adminAuth = require('./controllers/admin/auth')(bcrypt);
@@ -74,7 +75,7 @@ const eventRemove = require('./controllers/event/remove')({param: paramValidator
 const eventController = require('./controllers/event/index')(eventList, eventCreate, eventUpdate, eventRemove);
 const eventRouter = require('./routes/event')(express, eventController);
 
-const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, {media: mediaQuery}, mimeTypesConfig);
+const mediaCreate = require('./controllers/media/create')(multer, {body: bodyValidator, file: fileValidator, result: validationResult}, {media: mediaQuery}, mimeTypesConfig, crypto);
 const mediaUpdate = require('./controllers/media/update')({param: paramValidator, body: bodyValidator, result: validationResult}, {media: mediaQuery});
 const mediaList = require('./controllers/media/list')({media: mediaQuery});
 const mediaRemove = require('./controllers/media/remove')({param: paramValidator, result: validationResult}, {media: mediaQuery});

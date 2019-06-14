@@ -114,7 +114,7 @@ function upcoming(database) {
 			.where('event.end', '>', new Date())
 			.orderBy('start')
 			.eager('media(mediaProjection)', {
-				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type'])
+				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.link_text', 'media.type', 'usage'])
 			});
 	};
 }

@@ -10,10 +10,11 @@ function eventMediaModel(BaseModel) {
 		static get jsonSchema() {
 			return {
 				type: 'object',
-				required: ['event_id', 'media_id'],
+				required: ['event_id', 'media_id', 'usage'],
 
 				properties: {
 					id: {type: 'integer'},
+					usage: {type: 'string'},
 					event_id: {type: 'integer'},
 					media_id: {type: 'integer'}
 				}

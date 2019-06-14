@@ -12,6 +12,8 @@ function indexRouter(express, controller) {
 
 	router.get('/thanks', controller.thanks);
 
+	router.get('/media/:id/:name', controller.getMedia);
+
 	return router;
 }
 

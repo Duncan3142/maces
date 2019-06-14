@@ -10,6 +10,7 @@ const db = knex({
 	client: 'pg',
 	connection
 });
+const crypto = require('crypto');
 
 async function adminInsert(db, adminAuth, email, password) {
 	const admin = {email};
@@ -18,7 +19,9 @@ async function adminInsert(db, adminAuth, email, password) {
 }
 
 function mediaInsert(db, description, link_text, name, type, fileName) {
-	return db('media').insert({description, link_text, name, type, file: fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`))}).returning('id');
+	const file = fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`));
+	const hash = crypto.createHash('md5').update(file).digest('hex');
+	return db('media').insert({description, link_text, name, type, file, hash}).returning('id');
 }
 
 function eventInsert(db, title, description, when, location, start, end) {

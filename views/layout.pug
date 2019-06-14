@@ -18,14 +18,15 @@ html(lang='en')
 							a(href='/thanks') Thanks
 						span.nav-item
 							a(href='/photos') Photos
+						span.nav-item
+							a(href='https://www.macmillan.org.uk/')
+								img.logo(src='/images/logo.png')
 				div.header-image-container
 					div.image-text
 						p Welcome to
-						h2 Macmillan East Sheen
-					img.header-image(src='/images/head.jpg')
-		div.content-container
-			section.content
-				block content
+						h1 Macmillan East Sheen
+					img.header-image(src=`/images/${headerImage ? headerImage : 'head.jpg'}`)
+		block content
 		footer
 			nav
 				h3 Friends

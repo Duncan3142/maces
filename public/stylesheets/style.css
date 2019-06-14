@@ -10,11 +10,14 @@ header > nav {
 	align-items: center;
 	justify-content: center;
 	flex-wrap: wrap;
-	margin: 1rem 0 2rem;
+	margin: 0 0 1rem;
+}
+
+header > nav > * {
+	margin: 1rem 3rem 0;
 }
 
 header > nav > .nav-item {
-	margin: 1rem 3rem 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -25,18 +28,48 @@ header > nav > .nav-item {
 	position: relative;
 }
 
+.logo {
+	display: block;
+}
+
 .image-text {
 	position: absolute;
-	top: 1rem;
+	bottom: 1rem;
 	left: 3rem;
 	color: white;
-	font-size: 3vw;
+	font-size: 2.5vw;
+	text-shadow: -1px 1px 0 #000,
+				1px 1px 0 #000,
+				1px -1px 0 #000,
+				-1px -1px 0 #000;
 	line-height: 50%
 }
+
+.event-img {
+	float: right;
+	width: 32rem;
+	border-radius: 1rem;
+}
+
+.events > * {
+	border-top: 0.5rem solid rgb(255, 250, 250);
+}
+
+/* .event:nth-child(odd) {
+	background: rgb(148, 194, 61);
+} */
 
 .header-image {
 	width: 100%;
 	display: block;
+}
+
+.header-image-background {
+	width: 100%;
+	height: 16rem;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center top;
 }
 
 footer {
@@ -57,19 +90,25 @@ footer > nav {
 
 .nav-item > a {
 	color: white;
-}
-
-.content-container {
-	background-color: white;
+	font-size: 1.1rem;
 }
 
 .content {
+	background-color: white;
+}
+
+.content-container {
 	max-width: 60rem;
 	margin: 0 auto;
 }
 
 .event {
-	margin: 2rem 0;
+	/* margin: 2rem 0; */
+	padding: 1rem 0;
+}
+
+.events-header {
+	text-align: center;
 }
 
 input, label, textarea, select {

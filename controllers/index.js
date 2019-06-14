@@ -11,8 +11,26 @@ function index(eventQueries) {
 	};
 }
 
+function getMedia(mediaQueries) {
+	return async function(req, res, next) {
+		try {
+			const unmodified = await mediaQueries.checkHash(req.params.id, req.headers['if-none-match']);
+			if (unmodified) {
+				res.status(304).end();
+			} else {
+				const media = await mediaQueries.getFile(req.params.id);
+				res.setHeader('ETag', media.hash);
+				res.set('Content-Type', media.type);
+				res.send(media.file);
+			}
+		} catch(err) {
+			next(err);
+		}
+	};
+}
+
 function about(req, res) {
-	res.render('about');
+	res.render('about', {headerImage: 'committee.jpg'});
 }
 
 function history(req, res) {
@@ -23,12 +41,15 @@ function thanks(req, res) {
 	res.render('thanks');
 }
 
-function controller(eventQueries) {
+function controller(queries) {
+	const eventQueries = queries.event;
+	const mediaQueries = queries.media;
 	return {
 		index: index(eventQueries),
 		about: about,
 		history: history,
-		thanks: thanks
+		thanks: thanks,
+		getMedia: getMedia(mediaQueries)
 	};
 }
 

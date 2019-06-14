@@ -15,7 +15,7 @@ async function upsertMedia(upsertQuery, routeHandles) {
 	}
 }
 
-function validateFileUpsert(validationResult, queries, mimeTypes) {
+function validateFileUpsert(validationResult, queries, mimeTypes, crypto) {
 	return async (req, res, next) => {
 
 		// Extract the validation errors from a request.
@@ -27,7 +27,8 @@ function validateFileUpsert(validationResult, queries, mimeTypes) {
 				link_text: req.body.link_text,
 				name: req.file.originalname,
 				type: req.file.mimetype,
-				file: req.file.buffer
+				file: req.file.buffer,
+				hash: crypto.createHash('md5').update(req.file.buffer).digest('hex')
 			};
 
 			const mediaQueries = queries.media;
@@ -45,7 +46,7 @@ function validateFileUpsert(validationResult, queries, mimeTypes) {
 	};
 }
 
-function post(multer, validators, queries, mimeTypes) {
+function post(multer, validators, queries, mimeTypes, crypto) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
 
@@ -89,7 +90,7 @@ function post(multer, validators, queries, mimeTypes) {
 		bodyValidator.filter('link_text').trim(),
 
 		// Process request after validation and sanitization.
-		validateFileUpsert(validationResult, queries, mimeTypes)
+		validateFileUpsert(validationResult, queries, mimeTypes, crypto)
 	];
 }
 
@@ -102,13 +103,13 @@ function flattenMimeTypes(mimeFilters, required) {
 	}, []);
 }
 
-function controller(multer, validators, queries, mimeFilters) {
+function controller(multer, validators, queries, mimeFilters, crypto) {
 
 	const mimeTypes = flattenMimeTypes(mimeFilters, ['image', 'flyer']);
 
 	return {
 		get: get(mimeTypes),
-		post: post(multer, validators, queries, mimeTypes)
+		post: post(multer, validators, queries, mimeTypes, crypto)
 	};
 }
 

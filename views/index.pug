@@ -2,25 +2,34 @@ extends layout
 
 mixin eventView(event)
 	article.event
-		h2= event.title
-		p= event.location
-		p= event.when
-		- descriptionParas = event.description.split('\n')
-		each para in descriptionParas
-			p= para
-		each media in event.media
-			ul
-				li
-					p= media.description
+		div.content-container
+			- const image = event.image();
+			if image
+				img.event-img(src=`/media/${image.id}/${image.name}`)
+			h2.title= event.title
+			p.location= event.location
+			p.when= event.when
+			- descriptionParas = event.description.split('\n')
+			each para in descriptionParas
+				p= para
+			- const flyer = event.flyer();
+			if flyer
+				a(href=`/media/${flyer.id}/${flyer.name}`) #{flyer.link_text}
 
 block content
-	if error
-		p Error fetching content.
-	else if events.length
-		h2 Please find our upcoming events below
+	section.content
 
-		section.events
-			each event in events
-				+eventView(event)
-	else
-		p Watch this space for upcoming events.
+		if error
+			p Error fetching content.
+		else if events.length
+			div.events-header
+				div.content-container
+					h2 Please find our upcoming events below
+
+			section.events
+				each event in events
+					+eventView(event)
+		else
+			div.events-header
+				div.content-container
+					h2 Watch this space for upcoming events

@@ -15,6 +15,39 @@ function mediaQuery(database) {
 	};
 }
 
+function checkHash(database) {
+	const MediaModel = database.getModel('media');
+	return async function (id, hash) {
+		let result = hash ? true : false;
+		if (result) {
+			const media = await MediaModel
+				.query()
+				.select([
+					'id'
+				])
+				.where('id', id)
+				.andWhere('hash', hash)
+				.first();
+			result = media ? true : false;
+		}
+		return result;
+	};
+}
+
+function getFile(database) {
+	const MediaModel = database.getModel('media');
+	return function(id) {
+		return MediaModel.query()
+			.select([
+				'type',
+				'file',
+				'hash'
+			])
+			.where('id', id)
+			.first();
+	};
+}
+
 function list(database) {
 	const MediaModel = database.getModel('media');
 	return function() {
@@ -40,7 +73,7 @@ function get(database, mimeFilters) {
 function getAll(getter) {
 	return function (usages) {
 		return Promise.all(usages.map(getter));
-	}
+	};
 }
 
 function markSelected(available, selectedID) {
@@ -73,7 +106,7 @@ function checkMediaExists(database, mimeFilter) {
 			.whereIn('type', mimeFilter)
 			.first();
 		return media ? media.id === mediaID : false;
-	}
+	};
 }
 
 function isValidID(id, check) {
@@ -161,7 +194,9 @@ function controller(database, mimeFilters) {
 		validID: validMediaID(database, mimeFilters),
 		list: list(database),
 		delete: deleteTransaction(database),
-		fetch: fetch(database)
+		fetch: fetch(database),
+		getFile: getFile(database),
+		checkHash: checkHash(database)
 	};
 }
 
