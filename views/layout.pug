@@ -28,17 +28,20 @@ html(lang='en')
 					img.header-image(src=`/images/${headerImage ? headerImage : 'head.jpg'}`)
 		block content
 		footer
-			nav
-				h3 Friends
-				span.nav-item
-					a(href='https://www.macmillanchiswick.com') Chiswick
-				span.nav-item
-					a(href='https://www.macmillanmerton.com') Merton
-			nav
-				h3 Contact
-				span.nav-item
-					a(href='mailto:macmillan.sheen@gmail.com') Send us an email
-			nav
-				h3 Admin
-				span.nav-item
-					a(href='/admin') Login
+			div.footer-nav
+				nav
+					h3 Friends
+					span.nav-item
+						a(href='https://www.macmillanchiswick.com') Chiswick
+					span.nav-item
+						a(href='https://www.macmillanmerton.com') Merton
+				nav
+					h3 Contact
+					span.nav-item
+						a(href='mailto:macmillan.sheen@gmail.com') Send us an email
+				nav
+					h3 Admin
+					span.nav-item
+						a(href='/admin') Login
+			div.legal
+				p Macmillan Cancer Support, registered charity in England and Wales (261017), Scotland (SCO39907) and the Isle of Man (604)

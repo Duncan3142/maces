@@ -76,7 +76,7 @@ header > nav > .nav-item {
 	background-position: center top;
 }
 
-footer {
+.footer-nav {
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -85,7 +85,7 @@ footer {
 	border-top: 1px solid black;
 }
 
-footer > nav {
+.footer-nav > nav {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -93,7 +93,7 @@ footer > nav {
 	margin: 0 6rem 2rem;
 }
 
-footer > nav .nav-item {
+.footer-nav > nav .nav-item {
 	margin: 0.5rem 0;
 }
 

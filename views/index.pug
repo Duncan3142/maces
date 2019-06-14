@@ -4,11 +4,11 @@ mixin eventView(event)
 	article.event
 		div.content-container
 			- const image = event.image();
-			if image
-				img.event-img(src=`/media/${image.id}/${image.name}`)
 			h2.title= event.title
 			p.location= event.location
 			p.when= event.when
+			if image
+				img.event-img(src=`/media/${image.id}/${image.name}`)
 			- descriptionParas = event.description.split('\n')
 			each para in descriptionParas
 				p= para
