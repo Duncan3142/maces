@@ -106,7 +106,8 @@ function deleteTransaction(database) {
 				await deleteGraph(MediaModel, trnx, mediaID);
 				return trnx.commit();
 			} catch(err) {
-				return trnx.rollback(err);
+				trnx.rollback(err);
+				throw err;
 			}
 		};
 	};
@@ -127,7 +128,8 @@ function upsertTransaction(database) {
 						});
 				return trnx.commit();
 			} catch (err) {
-				return trnx.rollback(err);
+				trnx.rollback(err);
+				throw err;
 			}
 		};
 	};

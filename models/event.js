@@ -14,10 +14,10 @@ function eventModel(BaseModel) {
 
 				properties: {
 					id: {type: 'integer'},
-					title: {type: 'string', minLength: 1, maxLength: 255},
-					description: {type: 'string', minLength: 1, maxLength: 255},
-					when: {type: 'string', minLength: 1, maxLength: 255},
-					location: {type: 'string', minLength: 1, maxLength: 255},
+					title: {type: 'string', minLength: 1},
+					description: {type: 'string', minLength: 1},
+					when: {type: 'string', minLength: 1},
+					location: {type: 'string', minLength: 1},
 					start: {class: 'date'},
 					end: {class: 'date'}
 				}

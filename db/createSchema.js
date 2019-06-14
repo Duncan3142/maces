@@ -10,18 +10,18 @@ const db = knex({
 function createAdmin(db) {
 	return db.schema.createTable('admin', function (table) {
 		table.increments('id');
-		table.string('email');
-		table.string('hash');
+		table.text('email');
+		table.text('hash');
 	});
 }
 
 function createEvent(db) {
 	return db.schema.createTable('event', function (table) {
 		table.increments('id');
-		table.string('title');
-		table.string('description');
-		table.string('when');
-		table.string('location');
+		table.text('title');
+		table.text('description');
+		table.text('when');
+		table.text('location');
 		table.datetime('start');
 		table.datetime('end');
 		table.index('start', 'event_start_idx');
@@ -32,10 +32,10 @@ function createEvent(db) {
 function createMedia(db) {
 	return db.schema.createTable('media', function (table) {
 		table.increments('id');
-		table.string('description');
-		table.string('link_text');
-		table.string('name');
-		table.string('type');
+		table.text('description');
+		table.text('link_text');
+		table.text('name');
+		table.text('type');
 		table.binary('file');
 	});
 }
@@ -45,7 +45,7 @@ function createEventMedia(db) {
 		table.increments('id');
 		table.integer('event_id').unsigned();
 		table.integer('media_id').unsigned();
-		table.string('usage');
+		table.text('usage');
 		table.foreign('event_id', 'event_media_event_fkey').references('id').inTable('event');
 		table.foreign('media_id', 'event_media_media_fkey').references('id').inTable('media');
 	});

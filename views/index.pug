@@ -1,28 +1,26 @@
 extends layout
 
 mixin eventView(event)
-	h2
-		a(href='') #{event.title}
-	p= event.location
-	p= event.when
-	- descriptionParas = event.description.split('\n')
-	each para in descriptionParas
-		p= para
-	each media in event.media
-		ul
-			li
-				p= media.description
+	article.event
+		h2= event.title
+		p= event.location
+		p= event.when
+		- descriptionParas = event.description.split('\n')
+		each para in descriptionParas
+			p= para
+		each media in event.media
+			ul
+				li
+					p= media.description
 
 block content
-	h1= title
-	p Welcome to #[em Macmillan East Sheen].
-
 	if error
 		p Error fetching content.
 	else if events.length
-		p Please find our upcoming events below:
+		h2 Please find our upcoming events below
 
-		each event in events
-			+eventView(event)
+		section.events
+			each event in events
+				+eventView(event)
 	else
 		p Watch this space for upcoming events.

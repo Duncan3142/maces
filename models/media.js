@@ -14,9 +14,9 @@ function mediaModel(BaseModel) {
 
 				properties: {
 					id: {type: 'integer'},
-					description: {type: 'string', minLength: 1, maxLength: 255},
-					name: {type: 'string', minLength: 1, maxLength: 255},
-					type: {type: 'string', minLength: 1, maxLength: 255},
+					description: {type: 'string', minLength: 1},
+					name: {type: 'string', minLength: 1},
+					type: {type: 'string', minLength: 1},
 					file: {class: 'buffer'}
 				}
 			};

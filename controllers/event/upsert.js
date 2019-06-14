@@ -79,11 +79,11 @@ function commonValidators(validators, queries) {
 
 		bodyValidator.check('image', 'Image ID must be an integer').isInt(),
 		bodyValidator.filter('image').toInt(),
-		bodyValidator.check('image', 'Image ID must exists').custom(mediaQueries.validID('image')),
+		bodyValidator.check('image', 'Image ID must exist').custom(mediaQueries.validID('image')),
 
 		bodyValidator.check('flyer', 'Flyer ID must be an integer').isInt(),
 		bodyValidator.filter('flyer').toInt(),
-		bodyValidator.check('flyer', 'Flyer ID must exists').custom(mediaQueries.validID('flyer')),
+		bodyValidator.check('flyer', 'Flyer ID must exist').custom(mediaQueries.validID('flyer')),
 	];
 }
 

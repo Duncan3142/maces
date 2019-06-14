@@ -3,34 +3,41 @@ include /navSection
 doctype html
 html(lang='en')
 	head
-		title= title
-		meta(charset='utf-8')
-		meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-		link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css", integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous")
-		link(rel='stylesheet', href='/stylesheets/style.css')
+		block head
+			include /head
 	body
-		div.main-nav
-			block mainNav
-				+navSection('Navigation',[
-					{url: '/', name: 'Home'},
-					{url: '/about', name: 'About Us'},
-					{url: '/history', name: 'History'},
-					{url: '/thanks', name: 'Thanks'},
-					{url: '/photos', name: 'Photos'}
-				])
-				hr
-				+navSection('Friends',[
-					{url: 'http://macmillanchiswick.com', name: 'Macmillan Chiswick'},
-					{url: 'http://macmillanmerton.com', name: 'Macmillan Merton'}
-				])
-				hr
-				+navSection('Contact',[
-					{url: 'mailto:macmillan.sheen@gmail.com', name: 'Send us an email'}
-				])
-
-		div
-			block content
-		div
-			block footer
-					footer
-						a(href='/admin') Admin
+		header
+				nav.nav-section
+						span.nav-item
+							a(href='/') Home
+						span.nav-item
+							a(href='/about') About Us
+						span.nav-item
+							a(href='/history') History
+						span.nav-item
+							a(href='/thanks') Thanks
+						span.nav-item
+							a(href='/photos') Photos
+				div.header-image-container
+					div.image-text
+						p Welcome to
+						h2 Macmillan East Sheen
+					img.header-image(src='/images/head.jpg')
+		div.content-container
+			section.content
+				block content
+		footer
+			nav
+				h3 Friends
+				span.nav-item
+					a(href='https://www.macmillanchiswick.com') Chiswick
+				span.nav-item
+					a(href='https://www.macmillanmerton.com') Merton
+			nav
+				h3 Contact
+				span.nav-item
+					a(href='mailto:macmillan.sheen@gmail.com') Send us an email
+			nav
+				h3 Admin
+				span.nav-item
+					a(href='/admin') Login

@@ -53,12 +53,12 @@ const bodyValidator = require('./validators/body')(body, sanitizeBody);
 const paramValidator = require('./validators/param')(param, sanitizeParam);
 const fileValidator = require('./validators/file')(buildCheckFunction, buildSanitizeFunction, require('file-type'));
 
-const indexController = require('./controllers/index')(database);
-const indexRouter = require('./routes/index')(express, indexController);
-
 const mediaQuery = require('./query/media')(database, mimeTypesConfig);
 const eventQuery = require('./query/event')(database);
 const adminQuery = require('./query/admin')(database);
+
+const indexController = require('./controllers/index')(eventQuery);
+const indexRouter = require('./routes/index')(express, indexController);
 
 const adminAuth = require('./controllers/admin/auth')(bcrypt);
 require('./controllers/auth/local')(LocalStrategy, passport, adminAuth, adminQuery);
@@ -115,7 +115,7 @@ app.use('/login', loginRouter);
 app.use('/admin', adminRouter);
 
 // error handlers
-const errorHandlers = require('./controllers/error')(createError);
-app.use(errorHandlers);
+const errorHandler = require('./controllers/error')(createError);
+app.use(errorHandler);
 
 module.exports = app;

@@ -11,7 +11,7 @@ function serializeUser(user, done) {
 function deserializeUser(adminQueries) {
 	return function (id, done) {
 		adminQueries.fetch({ field: 'id', value: id })
-			.then(admin => done(null, admin))
+			.then(admin => done(null, admin ? admin : false))
 			.catch(done);
 	};
 }

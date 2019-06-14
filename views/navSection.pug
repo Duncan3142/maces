@@ -1,6 +1,6 @@
 mixin navSection(title, links)
-	p= title
-	nav
+	nav.nav-section
+		p= title
 		each link in links
-			span
+			span.nav-item
 				a(href=link.url) #{link.name}

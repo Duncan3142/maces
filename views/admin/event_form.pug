@@ -15,7 +15,7 @@ block content
 				+errorList(['title'])
 			div
 				label(for='description') Description:
-				textarea#description(placeholder='' name='description' required='true')
+				textarea#description(placeholder='' rows='16' name='description' required='true')
 					= event ? event.description : ''
 				+errorList(['description'])
 			div

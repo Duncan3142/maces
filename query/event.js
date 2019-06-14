@@ -13,7 +13,8 @@ function upsertTransaction(database) {
 						});
 				return trnx.commit();
 			} catch (err) {
-				return trnx.rollback(err);
+				trnx.rollback(err);
+				throw err;
 			}
 		};
 	};
@@ -70,7 +71,7 @@ function list(database) {
 			.eager('media(mediaProjection)', {
 				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type', 'media.link_text', 'usage'])
 			});
-	}
+	};
 }
 
 async function deleteGraph(EventModel, trnx, eventID) {
@@ -90,10 +91,32 @@ function deleteTransaction(database) {
 				await deleteGraph(EventModel, trnx, eventID);
 				return trnx.commit();
 			} catch(err) {
-				return trnx.rollback(err);
+				trnx.rollback(err);
+				throw err;
 			}
-		}
-	}
+		};
+	};
+}
+
+function upcoming(database) {
+	const EventModel = database.getModel('event');
+	return function() {
+		return EventModel.query()
+			.select([
+				'event.id',
+				'event.title',
+				'event.description',
+				'event.when',
+				'event.location',
+				'event.start',
+				'event.end',
+			])
+			.where('event.end', '>', new Date())
+			.orderBy('start')
+			.eager('media(mediaProjection)', {
+				mediaProjection: builder => builder.select(['media.id', 'media.description', 'media.name', 'media.type'])
+			});
+	};
 }
 
 function controller(database) {
@@ -102,7 +125,8 @@ function controller(database) {
 		fetch: fetch(database),
 		exists: exists(database),
 		list: list(database),
-		delete: deleteTransaction(database)
+		delete: deleteTransaction(database),
+		upcoming: upcoming(database)
 	};
 }
 
