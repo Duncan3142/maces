@@ -78,6 +78,8 @@ function post(multer, validators, queries, mimeTypes, crypto) {
 		fileValidator.check('mimetype')
 			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`),
 
+		fileValidator.filter('originalname').customSanitizer((name) => name.split(' ').join('-')),
+
 		// Validate the media name.
 		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
 
