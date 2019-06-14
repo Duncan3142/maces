@@ -14,7 +14,7 @@ mixin eventView(event)
 				p= para
 			- const flyer = event.flyer();
 			if flyer
-				a(href=`/media/${flyer.id}/${flyer.name}`) #{flyer.link_text}
+				a.flyer(href=`/media/${flyer.id}/${flyer.name}`) #{flyer.link_text}
 
 block content
 	section.content
