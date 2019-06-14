@@ -1,18 +1,15 @@
-function bufferMimeTypeMatch(file, value, fileType) {
-	return file ? value === fileType(file.buffer).mime : false;
-}
-
-function mimeTypesMatcher(fileType) {
+function setTrueType(typeChecker) {
 	return (value, { req }) => {
-		return bufferMimeTypeMatch(req.file, value, fileType);
+		const file = req.file;
+		return file ? typeChecker(file.buffer).mime : value;
 	};
 }
 
-function validator(buildCheckFunction, buildSanitizeFunction, fileType) {
+function validator(buildCheckFunction, buildSanitizeFunction, typeChecker) {
 	return {
 		check: buildCheckFunction(['file']),
 		filter: buildSanitizeFunction(['file']),
-		typeMatch: mimeTypesMatcher(fileType)
+		setType: setTrueType(typeChecker)
 	};
 }
 

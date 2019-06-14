@@ -52,7 +52,7 @@ function post(multer, validators, queries, mimeTypes, crypto) {
 
 	const bodyValidator = validators.body;
 	const fileValidator = validators.file;
-	const mimeTypesMatch = fileValidator.typeMatch;
+	const setMimeType = fileValidator.setType;
 	const validationResult = validators.result;
 
 	const upload = multer({
@@ -72,10 +72,11 @@ function post(multer, validators, queries, mimeTypes, crypto) {
 		// Validate that the description field is not empty.
 		bodyValidator.check('link_text', 'Link text required').isLength({ min: 1 }).trim(),
 
+		fileValidator.filter('mimetype').customSanitizer(setMimeType),
+
 		// Validate mime type.
 		fileValidator.check('mimetype')
-			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`)
-			.custom(mimeTypesMatch).withMessage('Claimed mime type must match actual mime type.'),
+			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`),
 
 		// Validate the media name.
 		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
