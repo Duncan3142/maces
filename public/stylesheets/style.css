@@ -52,7 +52,7 @@ header > nav > .nav-item {
 }
 
 .events > * {
-	border-top: 0.5rem solid rgb(255, 250, 250);
+	border-top: 0.25rem solid rgb(255, 250, 250);
 }
 
 /* .event:nth-child(odd) {
@@ -107,8 +107,11 @@ footer > nav {
 	padding: 1rem 0;
 }
 
-.events-header {
+.contents-header {
 	text-align: center;
+	padding: 0.5rem;
+	color: white;
+	background-color: rgb(148, 194, 61);
 }
 
 input, label, textarea, select {

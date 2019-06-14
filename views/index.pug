@@ -22,7 +22,7 @@ block content
 		if error
 			p Error fetching content.
 		else if events.length
-			div.events-header
+			div.contents-header
 				div.content-container
 					h2 Please find our upcoming events below
 
@@ -30,6 +30,6 @@ block content
 				each event in events
 					+eventView(event)
 		else
-			div.events-header
+			div.contents-header
 				div.content-container
 					h2 Watch this space for upcoming events
