@@ -125,6 +125,10 @@ header > nav > .nav-item {
 	font-size: 1.4rem;
 }
 
+.event .location {
+	font-style: italic;
+}
+
 .event .when {
 	font-weight: bold;
 	font-size: 1.2rem;
