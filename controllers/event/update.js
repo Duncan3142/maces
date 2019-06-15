@@ -21,8 +21,8 @@ async function renderForm(queries, routeHandles) {
 	const event = await eventQueries.fetch(req.params.id);
 	if (event) {
 		const getMedia = getItem(event.media);
-		const [images, flyers] = await mediaQueries.selected(['image', 'flyer'].map(getMedia));
-		res.render('admin/event_form', {title: 'Update event', event, images, flyers});
+		const [images, documents] = await mediaQueries.selected(['image', 'document'].map(getMedia));
+		res.render('admin/event_form', {title: 'Update event', event, images, documents});
 	} else {
 		const err = new Error('Event not found');
 		err.status = 404;

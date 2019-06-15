@@ -42,10 +42,10 @@ block content
 						option(value=image.id selected=(image.selected)) #{image.description}
 				+errorList(['image'])
 			div
-				label(for='flyer') Flyer:
-				select#flyer(name='flyer')
+				label(for='document') Document:
+				select#document(name='document')
 					option(value=-1)
-					each flyer in flyers
-						option(value=flyer.id selected=(flyer.selected)) #{flyer.description}
-				+errorList(['flyer'])
+					each document in documents
+						option(value=document.id selected=(document.selected)) #{document.description}
+				+errorList(['document'])
 		button(type='submit') Submit

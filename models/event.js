@@ -8,8 +8,8 @@ function eventModel(BaseModel) {
 			return this.media.find(media => media.usage === 'image');
 		}
 
-		flyer() {
-			return this.media.find(media => media.usage === 'flyer');
+		document() {
+			return this.media.find(media => media.usage === 'document');
 		}
 
 		static get tableName() {

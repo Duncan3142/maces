@@ -12,9 +12,9 @@ mixin eventView(event)
 			- descriptionParas = event.description.split('\n')
 			each para in descriptionParas
 				p= para
-			- const flyer = event.flyer();
-			if flyer
-				a.flyer(href=`/media/${flyer.id}/${flyer.name}`) #{flyer.link_text}
+			- const document = event.document();
+			if document
+				a.document(href=`/media/${document.id}/${document.name}`) #{document.link_text}
 
 block content
 	section.content

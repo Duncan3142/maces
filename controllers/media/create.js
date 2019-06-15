@@ -108,7 +108,7 @@ function flattenMimeTypes(mimeFilters, required) {
 
 function controller(multer, validators, queries, mimeFilters, crypto) {
 
-	const mimeTypes = flattenMimeTypes(mimeFilters, ['image', 'flyer']);
+	const mimeTypes = flattenMimeTypes(mimeFilters, ['image', 'document']);
 
 	return {
 		get: get(mimeTypes),

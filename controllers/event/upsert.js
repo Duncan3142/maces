@@ -19,7 +19,7 @@ function mediaArray(desiredMedia) {
 }
 
 function getEventField(name, req) {
-	return name === 'id' ? req.params.id : ( name === 'media' ? mediaArray([{usage: 'image', id: req.body.image}, {usage: 'flyer', id: req.body.flyer}]) : req.body[name] );
+	return name === 'id' ? req.params.id : ( name === 'media' ? mediaArray([{usage: 'image', id: req.body.image}, {usage: 'document', id: req.body.document}]) : req.body[name] );
 }
 
 function getEventData(req, fields) {
@@ -44,8 +44,8 @@ function validateEventUpsert(validationResult, queries) {
 			} else {
 				const mediaQueries = queries.media;
 				// There are errors. Render the form again with sanitized values/error messages.
-				const [images, flyers] = await mediaQueries.selected([{usage: 'image', id: req.body.image}, {usage: 'flyer', id: req.body.flyer}]);
-				res.render('admin/event_form', { title: `${action} event`, eventData, images, flyers, errors: errors.mapped() });
+				const [images, documents] = await mediaQueries.selected([{usage: 'image', id: req.body.image}, {usage: 'document', id: req.body.document}]);
+				res.render('admin/event_form', { title: `${action} event`, eventData, images, documents, errors: errors.mapped() });
 			}
 		};
 	};
@@ -81,9 +81,9 @@ function commonValidators(validators, queries) {
 		bodyValidator.filter('image').toInt(),
 		bodyValidator.check('image', 'Image ID must exist').custom(mediaQueries.validID('image')),
 
-		bodyValidator.check('flyer', 'Flyer ID must be an integer').isInt(),
-		bodyValidator.filter('flyer').toInt(),
-		bodyValidator.check('flyer', 'Flyer ID must exist').custom(mediaQueries.validID('flyer')),
+		bodyValidator.check('document', 'Document ID must be an integer').isInt(),
+		bodyValidator.filter('document').toInt(),
+		bodyValidator.check('document', 'Document ID must exist').custom(mediaQueries.validID('document')),
 	];
 }
 

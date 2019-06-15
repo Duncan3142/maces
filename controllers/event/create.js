@@ -1,8 +1,8 @@
 function get(queries) {
 	return async function (req, res) {
 		const mediaQueries = queries.media;
-		const [images, flyers] = await mediaQueries.available(['image', 'flyer']);
-		res.render('admin/event_form', {title: 'Create event', images, flyers});
+		const [images, documents] = await mediaQueries.available(['image', 'document']);
+		res.render('admin/event_form', {title: 'Create event', images, documents});
 	};
 }
 
