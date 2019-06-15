@@ -54,9 +54,23 @@ header > nav > .nav-item {
 }
 
 .event-img {
-	float: right;
-	width: 32rem;
-	border-radius: 1rem;
+	display: block;
+	margin: 1rem auto;
+	border-radius: 1.5rem;
+	width: 280px;
+}
+
+@media (min-width: 600px) {
+	.event-img {
+		float: right;
+		width: 300px;
+	}
+}
+
+@media (min-width: 850px) {
+	.event-img {
+		width: 400px;
+	}
 }
 
 .events .event:not(:first-child) {
@@ -81,7 +95,7 @@ header > nav > .nav-item {
 	justify-content: center;
 	align-items: flex-start;
 	flex-wrap: wrap;
-	margin: 0 0 3rem;
+	margin: 0 0 2rem;
 	border-top: 1px solid black;
 }
 
@@ -90,15 +104,19 @@ header > nav > .nav-item {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	margin: 0 6rem 2rem;
+	margin: 0 3rem 1rem;
 }
 
 .footer-nav > nav .nav-item {
 	margin: 0.5rem 0;
+	text-align: center;
 }
 
 .legal {
 	font-size: 0.7rem;
+	text-align: center;
+	border-top: 1px solid black;
+	padding: 0 3rem;
 }
 
 .nav-item > a {
@@ -113,6 +131,7 @@ header > nav > .nav-item {
 .content-container {
 	max-width: 60rem;
 	margin: 0 auto;
+	padding: 0 1rem;
 }
 
 .event {
@@ -127,9 +146,12 @@ header > nav > .nav-item {
 
 .event .title {
 	font-size: 1.4rem;
+	margin: 1rem 0 0.5rem;
 }
 
 .event .location {
+	margin: 0 0 1rem;
+	font-size: 1.1rem;
 	font-style: italic;
 }
 
@@ -144,6 +166,54 @@ header > nav > .nav-item {
 	color: white;
 	background-color: rgb(148, 194, 61);
 	border-bottom: 1px solid black;
+}
+
+.contents-header h2 {
+	font-size: 1em;
+}
+
+@media (min-width: 500px) {
+	.contents-header h2 {
+		font-size: 1.3em;
+	}
+}
+
+.photo-album {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center
+}
+
+.photo > img {
+	display: block;
+	width: 100%;
+	border: 1px solid black;
+}
+
+.photo {
+	width: 280px;
+	margin: 0.5rem 0.5rem;
+	text-align: center;
+}
+
+.photo-album > a {
+	text-decoration: none;
+}
+
+.photo p {
+	margin: 0;
+}
+
+@media (min-width: 480px) {
+	.photo {
+		width: 420px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.photo {
+		width: 560px;
+	}
 }
 
 input, label, textarea, select {

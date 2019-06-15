@@ -41,6 +41,10 @@ function thanks(req, res) {
 	res.render('thanks');
 }
 
+function photos(req, res) {
+	res.render('photos');
+}
+
 function controller(queries) {
 	const eventQueries = queries.event;
 	const mediaQueries = queries.media;
@@ -49,7 +53,8 @@ function controller(queries) {
 		about: about,
 		history: history,
 		thanks: thanks,
-		getMedia: getMedia(mediaQueries)
+		getMedia: getMedia(mediaQueries),
+		photos: photos
 	};
 }
 
