@@ -1,11 +1,10 @@
 {
   "name": "maces",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node --inspect-brk=5858 ./bin/www",
-    "devstart": "nodemon --inspect-brk=5858 ./bin/www",
-    "populate": "node populate"
+    "start": "node ./bin/www",
+    "devstart": "nodemon --inspect-brk=5858 ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -13,7 +12,7 @@
     "cookie-parser": "^1.4.3",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "express-session": "^1.16.1",
+    "express-session": "^1.16.2",
     "express-validator": "^5.3.1",
     "file-type": "^11.1.0",
     "helmet": "^3.18.0",

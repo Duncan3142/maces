@@ -12,22 +12,6 @@
 			"runtimeExecutable": "npm",
 			"protocol": "inspector",
 			"runtimeArgs": [
-				"run", "start"
-			],
-			"console": "integratedTerminal",
-			"env": {
-				"DEBUG": "maces:*"
-			},
-			"port": 5858
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Launch (nodemon)",
-			"cwd": "${workspaceFolder}",
-			"runtimeExecutable": "npm",
-			"protocol": "inspector",
-			"runtimeArgs": [
 				"run", "devstart"
 			],
 			"restart": true,

@@ -105,7 +105,7 @@ addLocal('basedir', app.get('views'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 86400000 }, resave: false, saveUninitialized: false, store: store }));
+app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 60 * 60 * 1000 }, resave: false, saveUninitialized: false, store: store }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('./public'));
