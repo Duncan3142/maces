@@ -9,6 +9,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const compression = require('compression');
 
 //Set up pg connection
 const fs = require('fs');
@@ -108,6 +109,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 60 * 60 * 1000 }, resave: false, saveUninitialized: false, store: store }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// enable compression
+app.use(compression());
+
+// static files
 app.use(express.static('./public'));
 
 // routes

@@ -5,9 +5,13 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon --inspect-brk=5858 ./bin/www"
-  },
+	},
+	"engines": {
+		"node": "10.15.3"
+	},
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "compression": "^1.7.4",
     "connect-session-knex": "^1.4.0",
     "cookie-parser": "^1.4.3",
     "debug": "^4.1.1",

@@ -58,7 +58,7 @@ async function populate(db) {
 				If you have bric-a-brac or home produce to donate then please email us. And we would LOVE you to bake us a cake if at all possible!!!
 				We can sell as many cakes as you can bake, so please let us know if you can help.`, "Sat September 7th 9.30am-1:00pm.", "Tower House School, Sheen Lane", new Date(2019, 9, 7), new Date(2019, 9, 8))
 			]),
-			adminInsert(db, adminAuth, 'admin@maces.com', process.env.MACES_ADMIN_PASSWORD)
+			adminInsert(db, adminAuth, process.env.MACES_USERNAME, process.env.MACES_PASSWORD)
 		]);
 		await Promise.all([
 			eventMediaInsert(db, carols[0], carolFlyer[0], 'document'),
