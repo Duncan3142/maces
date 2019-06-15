@@ -7,22 +7,22 @@ html(lang='en')
 			include /head
 	body
 		header
-				nav.nav-section
-						span.nav-item
-							a(href='/') Home
-						span.nav-item
-							a(href='/about') About Us
-						span.nav-item
-							a(href='/history') History
-						span.nav-item
-							a(href='/thanks') Thanks
-						span.nav-item
-							a(href='/photos') Photos
-						span.nav-item
-							a(href='https://www.macmillan.org.uk/')
-								img.logo(src='/images/logo.png')
-				div.header-image-container
-					img.header-image(src=`/images/${headerImage ? headerImage : 'header.jpg'}`)
+			nav.nav-section
+				span.nav-item
+					a(href='/') Home
+				span.nav-item
+					a(href='/about') About Us
+				span.nav-item
+					a(href='/history') History
+				span.nav-item
+					a(href='/thanks') Thanks
+				span.nav-item
+					a(href='/photos') Photos
+				span.nav-item
+					a(href='https://www.macmillan.org.uk/')
+						img.logo(src='/images/logo.png')
+			div.header-image-container
+				img.header-image(src=`/images/${headerImage ? headerImage : 'header.jpg'}`)
 		block content
 		footer
 			div.footer-nav
@@ -41,4 +41,4 @@ html(lang='en')
 					span.nav-item
 						a(href='/admin') Login
 			div.legal
-					p Macmillan Cancer Support, registered charity in England and Wales (261017), Scotland (SCO39907) and the Isle of Man (604)
+				p Macmillan Cancer Support, registered charity in England and Wales (261017), Scotland (SCO39907) and the Isle of Man (604)
