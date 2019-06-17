@@ -1,17 +1,12 @@
 'use strict';
 
-const knex = require('knex');
-const connection = require('./connection.js');
-const db = knex({
-	client: 'pg',
-	connection
-});
-
 function createAdmin(db) {
 	return db.schema.createTable('admin', function (table) {
 		table.increments('id');
 		table.text('email');
 		table.text('hash');
+		table.index('email', 'admin_email_idx');
+		table.index('hash', 'admin_hash_idx');
 	});
 }
 
@@ -38,6 +33,8 @@ function createMedia(db) {
 		table.text('type');
 		table.binary('file');
 		table.text('hash');
+		table.index('type', 'media_type_idx');
+		table.index('hash', 'media_hash_idx');
 	});
 }
 
@@ -47,6 +44,7 @@ function createEventMedia(db) {
 		table.integer('event_id').unsigned();
 		table.integer('media_id').unsigned();
 		table.text('usage');
+		table.index('usage', 'event_media_usage_idx');
 		table.foreign('event_id', 'event_media_event_fkey').references('id').inTable('event');
 		table.foreign('media_id', 'event_media_media_fkey').references('id').inTable('media');
 	});
@@ -54,17 +52,26 @@ function createEventMedia(db) {
 
 async function createSchema(db) {
 	try {
-		await db.schema.dropTableIfExists('admin');
-		await db.schema.dropTableIfExists('event_media');
-		await Promise.all([db.schema.dropTableIfExists('event'), db.schema.dropTableIfExists('media')]);
-		await Promise.all([createEvent(db), createMedia(db)]);
-		await createEventMedia(db);
-		await createAdmin(db);
+		await Promise.all([createEvent(db), createMedia(db), createAdmin(db)]);
+		await Promise.all([createEventMedia(db)]);
 	} catch (err) {
 		console.log(err);
-	} finally {
-		db.destroy();
 	}
 }
 
-createSchema(db);
+exports.up = function(db) {
+	return createSchema(db);
+};
+
+async function dropSchema(db) {
+	try {
+		await Promise.all([db.schema.dropTable('admin'), await db.schema.dropTable('event_media')]);
+		await Promise.all([db.schema.dropTable('event'), db.schema.dropTable('media')]);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+exports.down = function(db) {
+	return dropSchema(db);
+};

@@ -14,10 +14,7 @@ const compression = require('compression');
 //Set up pg connection
 const fs = require('fs');
 const dbConfig = require('./db/connection');
-const knex = require('knex')({
-	client: 'pg',
-	connection: dbConfig
-});
+const knex = require('knex')(dbConfig);
 
 const objection = require('objection');
 const Model = objection.Model;

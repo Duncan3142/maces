@@ -12,6 +12,12 @@
 				}
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Knex migrate",
+			"type": "shell",
+			"command": "npx",
+			"args": ["knex", "migrate:latest", "--knexfile", "db/connection"]
 		}
 	]
 }

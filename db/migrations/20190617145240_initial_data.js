@@ -1,15 +1,8 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
-const knex = require('knex');
-const connection = require('./connection.js');
 const bcrypt = require('bcrypt');
-const adminAuth = require('../controllers/admin/auth')(bcrypt);
-const db = knex({
-	client: 'pg',
-	connection
-});
+const adminAuth = require('../../controllers/admin/auth')(bcrypt);
 const crypto = require('crypto');
 
 async function adminInsert(db, adminAuth, email, password) {
@@ -19,7 +12,7 @@ async function adminInsert(db, adminAuth, email, password) {
 }
 
 function mediaInsert(db, description, link_text, fileName, type) {
-	const file = fs.readFileSync(path.resolve(__dirname, `./assets/${fileName}`));
+	const file = fs.readFileSync(`./assets/${fileName}`);
 	const hash = crypto.createHash('md5').update(file).digest('hex');
 	return db('media').insert({description, link_text, name: fileName, type, file, hash}).returning('id');
 }
@@ -32,13 +25,16 @@ function eventMediaInsert(db, event_id, media_id, usage) {
 	return db('event_media').insert({event_id, media_id, usage});
 }
 
-function deleteData(db) {
-	return db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete(), db('admin').delete()]));
+async function deleteData(db) {
+	try {
+		await db('event_media').delete().then(() => Promise.all([db('event').delete(), db('media').delete(), db('admin').delete()]));
+	} catch(err) {
+		console.log(err);
+	}
 }
 
 async function populate(db) {
 	try {
-		await deleteData(db);
 		const [[carolImage, carolFlyer, walkForm, coffeeImage, coffeeFlyer], [carols, flagDay, walk, coffee]] = await Promise.all([
 			Promise.all([
 				mediaInsert(db, 'Carol Picture', 'An Xmas Image', 'xmas-carols.jpg', 'image/jpeg'),
@@ -69,10 +65,13 @@ async function populate(db) {
 		]);
 	} catch(err) {
 		console.log(err);
-		throw err;
-	} finally {
-		db.destroy();
 	}
 }
 
-populate(db);
+exports.up = function(db) {
+	return populate(db);
+};
+
+exports.down = function(db) {
+	return deleteData(db);
+};
