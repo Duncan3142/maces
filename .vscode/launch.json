@@ -17,21 +17,10 @@
 			"restart": true,
 			"console": "integratedTerminal",
 			"env": {
-				"DEBUG": "maces:*"
+				"DEBUG": "maces:*",
+				"NODE_ENV": "development"
 			},
 			"port": 5858,
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Create Schema",
-			"program": "${workspaceFolder}/db/createSchema.js"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Insert Data",
-			"program": "${workspaceFolder}/db/populate.js"
 		}
 	]
 }
