@@ -30,7 +30,7 @@ function getMedia(mediaQueries) {
 }
 
 function about(req, res) {
-	res.render('about', {headerImage: 'committee.jpg'});
+	res.render('about', {headerImage: 'committee'});
 }
 
 function history(req, res) {
