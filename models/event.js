@@ -43,8 +43,6 @@ function eventModel(BaseModel) {
 						// ManyToMany relation needs the `through` object
 						// to describe the join table.
 						through: {
-							// If you have a model class for the join table
-							// you need to specify it like this:
 							modelClass: this.modelClass('event_media'),
 							from: 'event_media.event_id',
 							to: 'event_media.media_id',

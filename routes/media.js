@@ -7,19 +7,19 @@ function mediaRouter(express, controller) {
 
 	router.get('/', controller.list);
 
-	// GET request for creating media. NOTE This must come before route for id (i.e. display media).
+	// GET request for creating media. NOTE This must come before routes using params.
 	router.get('/create', controller.create_get);
 
 	// POST request for creating media.
 	router.post('/create', controller.create_post);
 
-	// POST request for creating media.
+	// POST request for deleting media.
 	router.post('/:id/delete', controller.remove);
 
-	// GET request for updating Event.
+	// GET request for updating media.
 	router.get('/:id/update', controller.update_get);
 
-	// POST request for updating Event.
+	// POST request for updating media.
 	router.post('/:id/update', controller.update_post);
 
 	return router;

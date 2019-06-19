@@ -10,9 +10,8 @@ const crypto = require('crypto');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const compression = require('compression');
-
-//Set up pg connection
 const fs = require('fs');
+//Set up db connection
 const dbConfig = require('./db/connection');
 const knex = require('knex')(dbConfig);
 
@@ -59,8 +58,11 @@ const adminQuery = require('./query/admin')(database);
 const indexController = require('./controllers/index')({event: eventQuery, media: mediaQuery});
 const indexRouter = require('./routes/index')(express, indexController);
 
-const adminAuth = require('./controllers/admin/auth')(bcrypt);
-require('./controllers/auth/local')(LocalStrategy, passport, adminAuth, adminQuery);
+const passwordAuth = require('./auth/password')(bcrypt);
+const enableLocalAuth = require('./auth/local')(LocalStrategy, passwordAuth, adminQuery);
+
+// Provide local auth strategy to passport
+enableLocalAuth(passport);
 
 const loginController = require('./controllers/login')(passport);
 const loginRouter = require('./routes/login')(express, loginController);

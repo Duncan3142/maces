@@ -7,19 +7,19 @@ function eventRoutes(express, controller) {
 
 	router.get('/', controller.list);
 
-	// GET request for creating a Event. NOTE This must come before routes that display Event (uses id).
+	// GET request for creating a Event. NOTE This must come before routes that use params.
 	router.get('/create', controller.create_get);
 
-	// POST request for creating Event.
+	// POST request for creating event.
 	router.post('/create', controller.create_post);
 
-	// POST request for deleting media.
+	// POST request for deleting event.
 	router.post('/:id/delete', controller.remove);
 
-	// GET request for updating Event.
+	// GET request for updating event.
 	router.get('/:id/update', controller.update_get);
 
-	// POST request for updating Event.
+	// POST request for updating event.
 	router.post('/:id/update', controller.update_post);
 
 	return router;

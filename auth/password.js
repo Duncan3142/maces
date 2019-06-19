@@ -1,23 +1,23 @@
-function setPassword(admin, bcrypt) {
+function set(admin, bcrypt) {
 	return async function(password) {
 		const hash = await bcrypt.hash(password, 16);
 		admin.hash = hash;
 	};
 }
 
-function validatePassword(admin, bcrypt) {
+function validate(admin, bcrypt) {
 	return async function(password) {
 		return await bcrypt.compare(password, admin.hash);
 	};
 }
 
-function controller(bcrypt) {
+function passwordAuth(bcrypt) {
 	return function(admin) {
 		return {
-			setPassword: setPassword(admin, bcrypt),
-			validatePassword: validatePassword(admin, bcrypt)
+			set: set(admin, bcrypt),
+			validate: validate(admin, bcrypt)
 		};
 	};
 }
 
-module.exports = controller;
+module.exports = passwordAuth;

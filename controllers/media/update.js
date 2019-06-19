@@ -87,7 +87,7 @@ function post(validators, queries) {
 		// Validate that the description field is not empty.
 		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
 
-		// Validate that the description field is not empty.
+		// Validate that the link_text field is not empty.
 		bodyValidator.check('link_text', 'Link text required').isLength({ min: 1 }).trim(),
 
 		// Sanitize (trim) the description field.
