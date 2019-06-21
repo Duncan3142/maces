@@ -27,8 +27,7 @@ function remove(validators, queries) {
 	const validationResult = validators.result;
 
 	return [
-		paramValidator.check('id', 'ID must be an integer').isInt(),
-		paramValidator.filter('id').toInt(),
+		paramValidator.check('id', 'ID must be an integer').isInt().toInt(),
 		removeEvent(validationResult, queries)
 	];
 }

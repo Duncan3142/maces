@@ -1,6 +1,6 @@
 function authenticator(passwordAuth) {
 	return function (admin, password) {
-		return admin ? passwordAuth(admin).validate(password) : false;
+		return passwordAuth(admin).validate(password);
 	};
 }
 
@@ -23,7 +23,7 @@ function enableLocalAuth(LocalStrategy, passwordAuth, adminQueries) {
 			(username, password, done) => {
 				adminQueries.fetch({ field: 'email', value: username })
 					.then(async (admin) => {
-						return (await auth(admin, password)) ? done(null, admin) : done(null, false, { errors: { 'email or password': 'is invalid' } });
+						return (admin && await auth(admin, password)) ? done(null, admin) : done(null, false, { errors: { 'email or password': 'is invalid' } });
 					})
 					.catch(done);
 			}

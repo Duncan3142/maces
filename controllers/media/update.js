@@ -32,8 +32,7 @@ function get(validators, queries) {
 	const validationResult = validators.result;
 
 	return [
-		paramValidator.check('id', 'Media id required').isInt(),
-		paramValidator.filter('id').toInt(),
+		paramValidator.check('id', 'Media id required').isInt().toInt(),
 		renderMedia(validationResult, queries)
 	];
 }
@@ -81,20 +80,13 @@ function post(validators, queries) {
 
 	return [
 
-		paramValidator.check('id', 'Media id required').isInt(),
-		paramValidator.filter('id').toInt(),
+		paramValidator.check('id', 'Media ID required').isInt().toInt(),
 
 		// Validate that the description field is not empty.
 		bodyValidator.check('description', 'Media description required').isLength({ min: 1 }).trim(),
 
 		// Validate that the link_text field is not empty.
 		bodyValidator.check('link_text', 'Link text required').isLength({ min: 1 }).trim(),
-
-		// Sanitize (trim) the description field.
-		bodyValidator.filter('description').trim(),
-
-		// Sanitize (trim) the link text field.
-		bodyValidator.filter('link_text').trim(),
 
 		// Process request after validation and sanitization.
 		validateFileUpsert(validationResult, queries)

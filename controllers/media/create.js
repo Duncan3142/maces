@@ -78,19 +78,13 @@ function post(multer, validators, queries, mimeTypes, crypto) {
 		fileValidator.check('mimetype')
 			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`),
 
-		fileValidator.filter('originalname').customSanitizer((name) => name.split(' ').join('-')),
+		fileValidator.filter('originalname').customSanitizer((name) => name.split(' ').join('_')),
 
 		// Validate the media name.
 		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
 
 		// File size.
 		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB`).isInt({max: maxFileSize}),
-
-		// Sanitize (trim) the description field.
-		bodyValidator.filter('description').trim(),
-
-		// Sanitize (trim) the link text field.
-		bodyValidator.filter('link_text').trim(),
 
 		// Process request after validation and sanitization.
 		validateFileUpsert(validationResult, queries, mimeTypes, crypto)

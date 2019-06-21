@@ -60,29 +60,21 @@ function commonValidators(validators, queries) {
 
 	return [
 		bodyValidator.check('title', 'Event title required').isLength({ min: 1 }).trim(),
-		bodyValidator.filter('title').trim(),
 
 		bodyValidator.check('description', 'Event description required').isLength({ min: 1 }).trim(),
-		bodyValidator.filter('description').trim(),
 
 		bodyValidator.check('when', 'Event date required').isLength({ min: 1 }).trim(),
-		bodyValidator.filter('when').trim(),
 
 		bodyValidator.check('location', 'Event location required').isLength({ min: 1 }).trim(),
-		bodyValidator.filter('location').trim(),
 
-		bodyValidator.check('start', 'Event start required').isISO8601({ strict: true }),
-		bodyValidator.filter('start').toDate(),
-		bodyValidator.check('end', 'Event end required').isISO8601({ strict: true }),
-		bodyValidator.filter('end').toDate(),
+		bodyValidator.check('start', 'Event start required').isISO8601({ strict: true }).toDate(),
+		bodyValidator.check('end', 'Event end required').isISO8601({ strict: true }).toDate(),
 		bodyValidator.check('start', 'Start date must not come after end date').custom(startBeforeEnd),
 
-		bodyValidator.check('image', 'Image ID must be an integer').isInt(),
-		bodyValidator.filter('image').toInt(),
+		bodyValidator.check('image', 'Image ID must be an integer').isInt().toInt(),
 		bodyValidator.check('image', 'Image ID must exist').custom(mediaQueries.validID('image')),
 
-		bodyValidator.check('document', 'Document ID must be an integer').isInt(),
-		bodyValidator.filter('document').toInt(),
+		bodyValidator.check('document', 'Document ID must be an integer').isInt().toInt(),
 		bodyValidator.check('document', 'Document ID must exist').custom(mediaQueries.validID('document')),
 	];
 }
