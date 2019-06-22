@@ -1,3 +1,5 @@
+'use strict';
+
 function get(mimeTypes) {
 	return function(req, res) {
 		res.render('admin/media_create', {title: 'Upload media', mimeTypes});
@@ -46,7 +48,7 @@ function validateFileUpsert(validationResult, queries, mimeTypes, crypto) {
 	};
 }
 
-function removeSpaces(fileName) { return fileName.split(' ').join('_') }
+function removeSpaces(fileName) { return fileName.split(' ').join('_'); }
 
 function post(multer, validators, queries, mimeTypes, crypto) {
 

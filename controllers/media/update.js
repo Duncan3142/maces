@@ -1,3 +1,5 @@
+'use strict';
+
 async function renderForm(queries, routeHandles) {
 	const req = routeHandles.req;
 	const res = routeHandles.res;

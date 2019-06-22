@@ -1,3 +1,5 @@
+'use strict';
+
 async function render(queries, res, next) {
 	try {
 		const eventQueries = queries.event;

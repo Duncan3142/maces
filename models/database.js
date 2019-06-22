@@ -1,3 +1,5 @@
+'use strict';
+
 function getModel(modelRegistry) {
 	return function(modelName) {
 		return modelRegistry.get(modelName);

@@ -1,3 +1,5 @@
+'use strict';
+
 function authenticator(passwordAuth) {
 	return function (admin, password) {
 		return passwordAuth(admin).validate(password);

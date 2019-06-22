@@ -35,6 +35,7 @@ async function deleteData(db) {
 
 async function populate(db) {
 	try {
+		// eslint-disable-next-line no-unused-vars
 		const [[carolImage, carolFlyer, walkForm, coffeeImage, coffeeFlyer], [carols, flagDay, walk, coffee]] = await Promise.all([
 			Promise.all([
 				mediaInsert(db, 'Carol Picture', 'An Xmas Image', 'xmas-carols.jpg', 'image/jpeg'),

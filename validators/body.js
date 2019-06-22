@@ -1,3 +1,5 @@
+'use strict';
+
 function validator(body, sanitizeBody) {
 	return {
 		check: body,

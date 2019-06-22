@@ -1,3 +1,5 @@
+'use strict';
+
 async function render(mediaQueries, res, next) {
 	try {
 		const media = await mediaQueries.list();

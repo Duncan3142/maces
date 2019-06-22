@@ -1,3 +1,5 @@
+'use strict';
+
 async function deleteEvent(deleteQuery, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;

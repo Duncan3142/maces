@@ -5,7 +5,9 @@ async function getEvents() {
 	return new Vue({
 		el: '#app',
 		data: {
-			events: response.body.events;
+			message: 'for much good times',
+			events: response,
+			peekaboo: true
 		}
 	});
 }

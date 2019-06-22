@@ -1,3 +1,5 @@
+'use strict';
+
 function setTrueType(typeChecker) {
 	return (value, { req }) => {
 		const file = req.file;

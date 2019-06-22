@@ -1,3 +1,5 @@
+'use strict';
+
 function set(admin, bcrypt) {
 	return async function(password) {
 		const hash = await bcrypt.hash(password, 16);

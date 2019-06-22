@@ -1,3 +1,5 @@
+'use strict';
+
 function get() {
 	return function(req, res) {
 		res.render('login', { title: 'Login' });

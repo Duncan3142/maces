@@ -1,3 +1,5 @@
+'use strict';
+
 function mediaQuery(database) {
 	return function(mimeFilter) {
 		const MediaModel = database.getModel('media');

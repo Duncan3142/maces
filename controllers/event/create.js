@@ -1,3 +1,5 @@
+'use strict';
+
 function get(queries) {
 	return async function (req, res) {
 		const mediaQueries = queries.media;

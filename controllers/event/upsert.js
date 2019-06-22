@@ -1,3 +1,5 @@
+'use strict';
+
 async function upsertEvent(upsertQuery, routeHandles) {
 	const res = routeHandles.res;
 	const next = routeHandles.next;

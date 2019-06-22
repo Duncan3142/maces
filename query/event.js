@@ -1,3 +1,5 @@
+'use strict';
+
 function upsertTransaction(database) {
 	const EventModel = database.getModel('event');
 	return function(event) {

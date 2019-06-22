@@ -1,3 +1,5 @@
+'use strict';
+
 function getItem(media) {
 	return function(usage) {
 		return media.reduce((acc, elem) => {

@@ -1,3 +1,5 @@
+'use strict';
+
 function fetch(database) {
 	const AdminModel = database.getModel('admin');
 	return function(key) {
