@@ -9,7 +9,7 @@ async function renderForm(queries, routeHandles) {
 
 	const media = await mediaQueries.fetch(req.params.id);
 	if (media) {
-		res.render('admin/media_update', {title: 'Update media', media});
+		res.render('admin/media_update', { media });
 	} else {
 		const err = new Error('Media not found');
 		err.status = 404;
@@ -69,7 +69,7 @@ function validateFileUpsert(validationResult, queries) {
 			await upsertMedia(upsertQuery, { req, res, next });
 		} else {
 			// There are errors. Render the form again with sanitized values/error messages.
-			res.render('admin/media_update', { title: 'Update media', media, errors: errors.mapped() });
+			res.render('admin/media_update', { media, errors: errors.mapped() });
 		}
 	};
 }

@@ -3,7 +3,7 @@
 async function render(mediaQueries, res, next) {
 	try {
 		const media = await mediaQueries.list();
-		res.render('admin/media', { title: 'Macmillan East Sheen Home', media });
+		res.render('admin/media', { media });
 	} catch(err) {
 		next(err);
 	}

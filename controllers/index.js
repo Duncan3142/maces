@@ -4,7 +4,7 @@ function index(eventQueries) {
 	return async function(req, res, next) {
 		try {
 			const events = await eventQueries.upcoming();
-			res.render('index', { title: 'Macmillan East Sheen Home', events });
+			res.render('index', { events });
 		} catch(err) {
 			next(err);
 		}

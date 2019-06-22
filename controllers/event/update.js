@@ -24,9 +24,10 @@ async function renderForm(queries, routeHandles) {
 	if (event) {
 		const getMedia = getItem(event.media);
 		const [images, documents] = await mediaQueries.selected(['image', 'document'].map(getMedia));
-		res.render('admin/event_form', {title: 'Update event', event, images, documents});
+		res.render('admin/event_form', { title: 'Update event', event, images, documents });
 	} else {
 		const err = new Error('Event not found');
+		// @ts-ignore
 		err.status = 404;
 		next(err);
 	}

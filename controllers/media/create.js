@@ -2,7 +2,7 @@
 
 function get(mimeTypes) {
 	return function(req, res) {
-		res.render('admin/media_create', {title: 'Upload media', mimeTypes});
+		res.render('admin/media_create', { mimeTypes });
 	};
 }
 
@@ -43,7 +43,7 @@ function validateFileUpsert(validationResult, queries, mimeTypes, crypto) {
 				link_text: req.body.link_text,
 			};
 			// There are errors. Render the form again with sanitized values/error messages.
-			res.render('admin/media_create', { title: 'Upload media', mimeTypes, media, errors: errors.mapped() });
+			res.render('admin/media_create', { mimeTypes, media, errors: errors.mapped() });
 		}
 	};
 }

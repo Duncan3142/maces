@@ -2,7 +2,7 @@
 
 function get() {
 	return function(req, res) {
-		res.render('login', { title: 'Login' });
+		res.render('login');
 	};
 }
 

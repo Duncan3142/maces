@@ -4,7 +4,7 @@ async function render(queries, res, next) {
 	try {
 		const eventQueries = queries.event;
 		const events = await eventQueries.list();
-		res.render('admin/event', { title: 'Macmillan East Sheen Home', events });
+		res.render('admin/event', { events });
 	} catch(err) {
 		next(err);
 	}

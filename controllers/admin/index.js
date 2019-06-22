@@ -2,7 +2,7 @@
 
 function index() {
 	return function(req, res) {
-		res.render('admin/index', { title: 'Admin' });
+		res.render('admin/index');
 	};
 }
 

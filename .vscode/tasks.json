@@ -17,7 +17,12 @@
 			"label": "Knex migrations",
 			"type": "shell",
 			"command": "npx",
-			"args": ["knex", "migrate:latest", "--knexfile", "db/connection"]
+			"args": [
+				"knex",
+				"migrate:latest",
+				"--knexfile",
+				"db/connection"
+			]
 		}
 	]
 }
