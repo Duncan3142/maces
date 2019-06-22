@@ -32,7 +32,7 @@ function get(validators, queries) {
 	const validationResult = validators.result;
 
 	return [
-		paramValidator.check('id', 'Media id required').isInt().toInt(),
+		paramValidator.check('id', 'Media ID required').isInt().toInt(),
 		renderMedia(validationResult, queries)
 	];
 }

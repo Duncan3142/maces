@@ -68,14 +68,17 @@ function commonValidators(validators, queries) {
 		bodyValidator.check('location', 'Event location required').isLength({ min: 1 }).trim(),
 
 		bodyValidator.check('start', 'Event start required').isISO8601({ strict: true }).toDate(),
-		bodyValidator.check('end', 'Event end required').isISO8601({ strict: true }).toDate(),
-		bodyValidator.check('start', 'Start date must not come after end date').custom(startBeforeEnd),
+		bodyValidator.check('end', 'Event end required')
+			.isISO8601({ strict: true }).withMessage().toDate()
+			.custom(startBeforeEnd).withMessage('Start date must not come after end date'),
 
-		bodyValidator.check('image', 'Image ID must be an integer').isInt().toInt(),
-		bodyValidator.check('image', 'Image ID must exist').custom(mediaQueries.validID('image')),
+		bodyValidator.check('image')
+			.isInt().withMessage('Image ID must be an integer').toInt()
+			.custom(mediaQueries.validID('image')).withMessage('Image ID must exist'),
 
-		bodyValidator.check('document', 'Document ID must be an integer').isInt().toInt(),
-		bodyValidator.check('document', 'Document ID must exist').custom(mediaQueries.validID('document')),
+		bodyValidator.check('document')
+			.isInt().withMessage('Document ID must be an integer').toInt()
+			.custom(mediaQueries.validID('document')).withMessage('Document ID must exist'),
 	];
 }
 

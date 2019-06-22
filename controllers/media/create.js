@@ -46,6 +46,8 @@ function validateFileUpsert(validationResult, queries, mimeTypes, crypto) {
 	};
 }
 
+function removeSpaces(fileName) { return fileName.split(' ').join('_') }
+
 function post(multer, validators, queries, mimeTypes, crypto) {
 
 	const maxFileSize = 5 * 1024 * 1024; // 5 MB upload limit;
@@ -72,16 +74,12 @@ function post(multer, validators, queries, mimeTypes, crypto) {
 		// Validate that the link_text is not empty.
 		bodyValidator.check('link_text', 'Link text required').isLength({ min: 1 }).trim(),
 
-		fileValidator.filter('mimetype').customSanitizer(setMimeType),
-
 		// Validate mime type.
 		fileValidator.check('mimetype')
-			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`),
-
-		fileValidator.filter('originalname').customSanitizer((name) => name.split(' ').join('_')),
+			.isIn(mimeTypes).withMessage(`File must be one of the following mime types: ${mimeTypes}`).customSanitizer(setMimeType),
 
 		// Validate the media name.
-		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/),
+		fileValidator.check('originalname', 'Valid file name required').matches(/\w+(?:\.\w+)+/).customSanitizer(removeSpaces),
 
 		// File size.
 		fileValidator.check('size', `File must be less than ${maxFileSize / 1024 / 1024} MB`).isInt({max: maxFileSize}),

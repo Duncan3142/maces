@@ -47,7 +47,7 @@ function get(validators, queries) {
 	const validationResult = validators.result;
 
 	return [
-		paramValidator.check('id', 'Event id required').isInt().toInt(),
+		paramValidator.check('id', 'Event ID required').isInt().toInt(),
 		renderEvent(validationResult, queries)
 	];
 }
@@ -60,7 +60,7 @@ function post(validators, upsert) {
 
 	return [
 
-		paramValidator.check('id', 'Event id required').isInt().toInt(),
+		paramValidator.check('id', 'Event ID required').isInt().toInt(),
 
 		// Generic validators
 		...upsert.validators,
