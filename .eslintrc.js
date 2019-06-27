@@ -28,6 +28,12 @@ module.exports = {
 			'error',
 			'always'
 		],
-		'strict': ['error', 'safe']
+		'strict': [
+			'error',
+			'safe'
+		],
+		'global-require': [
+			'error'
+		]
 	}
 };

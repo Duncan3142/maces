@@ -1,0 +1,59 @@
+include navSection
+
+mixin headerImage(name)
+	if name === 'committee'
+		img.header-image(src='/images/committee.jpg' alt = 'Our committee')
+	else
+		img.header-image(srcset='/images/header-640.jpg 640w, /images/header-860.jpg 860w, /images/header-1200.jpg 1200w, /images/header-1920.jpg 1920w, /images/header.jpg 2865w' sizes='(max-width: 640px) 640px, (max-width: 860px) 860px, (max-width: 1200px) 1200px, (max-width: 1920px) 1920px, 2865px' src='/images/header-1920.jpg' alt='Macmillan East Sheen')
+
+doctype html
+html(lang='en')
+	head
+		block head
+			include head
+			<!-- Global site tag (gtag.js) - Google Analytics -->
+			script(async src="https://www.googletagmanager.com/gtag/js?id=UA-142344649-1")
+			script.
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+
+				gtag('config', 'UA-142344649-1');
+
+	body
+		header
+			nav.nav-section
+				span.nav-item
+					a(href='/') Home
+				span.nav-item
+					a(href='/about') About Us
+				span.nav-item
+					a(href='/history') History
+				span.nav-item
+					a(href='/thanks') Thanks
+				span.nav-item
+					a(href='/photos') Photos
+				span.nav-item
+					a(href='https://www.macmillan.org.uk/')
+						img.logo(src='/images/logo.png')
+			div.header-image-container
+				+headerImage(headerImage ? headerImage : 'header')
+		block content
+		footer
+			div.footer-nav
+				nav
+					h3 Friends
+					span.nav-item
+						a(href='https://www.macmillanchiswick.com') Chiswick
+					span.nav-item
+						a(href='https://www.macmillanmerton.com') Merton
+				nav
+					h3 Contact
+					span.nav-item
+						a(href='mailto:macmillan.sheen@gmail.com') Send us an email
+				nav
+					h3 Admin
+					span.nav-item
+						a(href='/admin') Login
+			div.legal
+				p Macmillan Cancer Support, registered charity in England and Wales (261017), Scotland (SCO39907) and the Isle of Man (604)

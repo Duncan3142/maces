@@ -1,0 +1,51 @@
+extends layout
+
+include ../validation
+
+block content
+	h1 #{title}
+
+	+pleaseCorrect()
+
+	form(method='POST' action='')
+		div
+			div
+				label(for='title') Title:
+				input#title(type='text', placeholder='' name='title' value=(event ? event.title : '') required='true')
+				+errorList(['title'])
+			div
+				label(for='description') Description:
+				textarea#description(placeholder='' rows='16' name='description' required='true')
+					= event ? event.description : ''
+				+errorList(['description'])
+			div
+				label(for='when') When:
+				input#when(type='text', placeholder='' name='when' value=(event ? event.when : '') required='true')
+				+errorList(['when'])
+			div
+				label(for='location') Location:
+				input#location(type='text', placeholder='' name='location' value=(event ? event.location : '') required='true')
+				+errorList(['location'])
+			div
+				label(for='start') Start:
+				input#start(type='date', placeholder='yyyy-mm-dd' name='start' value=(event) required='true')
+				+errorList(['start'])
+			div
+				label(for='end') End:
+				input#end(type="date" placeholder='yyyy-mm-dd' name='end' value=(event) required='true')
+				+errorList(['end'])
+			div
+				label(for='image') Image:
+				select#image(name='image')
+					option(value=-1)
+					each image in images
+						option(value=image.id selected=(image.selected)) #{image.description}
+				+errorList(['image'])
+			div
+				label(for='document') Document:
+				select#document(name='document')
+					option(value=-1)
+					each document in documents
+						option(value=document.id selected=(document.selected)) #{document.description}
+				+errorList(['document'])
+		button(type='submit') Submit

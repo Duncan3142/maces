@@ -1,0 +1,24 @@
+extends layout
+
+include ../validation
+
+block content
+	h1 Upload media
+
+	+pleaseCorrect()
+
+	form(method='POST' action='' enctype="multipart/form-data")
+		div
+			div
+				label(for='description') Description:
+				input#description(type='text', placeholder='' name='description' value=(media ? media.description : '') required='true')
+				+errorList(['description'])
+			div
+				label(for='linkText') Link Text:
+				input#linkText(type='text', placeholder='' name='link_text' value=(media ? media.link_text : '') required='true')
+				+errorList(['link_text'])
+			div
+				label(for='file') File:
+				input#file(type="file" name="file" accept=(mimeTypes.toString()) required='true')
+				+errorList(['mimetype','originalname','size'])
+		button(type='submit') Submit

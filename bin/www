@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
+'use strict';
+
 /**
  * Module dependencies.
  */
 
-const app = require('../app');
+const app = require('../server');
 const debug = require('debug')('maces:server');
 const http = require('http');
 

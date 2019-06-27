@@ -2,8 +2,10 @@
 
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const passwordAuth = require('../../auth/password')(bcrypt);
+const passwordAuth = require('../../auth/services/passwordAuth')(bcrypt);
 const crypto = require('crypto');
+const filehashFactory = require('../../api/utils/filehash');
+const filehash = filehashFactory(crypto);
 
 async function adminInsert(db, passwordAuth, email, password) {
 	const admin = {email};
@@ -13,7 +15,7 @@ async function adminInsert(db, passwordAuth, email, password) {
 
 function mediaInsert(db, description, link_text, fileName, type) {
 	const file = fs.readFileSync(`./assets/${fileName}`);
-	const hash = crypto.createHash('md5').update(file).digest('hex');
+	const hash = filehash(file);
 	return db('media').insert({description, link_text, name: fileName, type, file, hash}).returning('id');
 }
 

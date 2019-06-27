@@ -14,12 +14,23 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Knex migrations",
+			"label": "Knex migrate latest",
 			"type": "shell",
 			"command": "npx",
 			"args": [
 				"knex",
 				"migrate:latest",
+				"--knexfile",
+				"db/connection"
+			]
+		},
+		{
+			"label": "Knex migrate rollback",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"knex",
+				"migrate:rollback",
 				"--knexfile",
 				"db/connection"
 			]

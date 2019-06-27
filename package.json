@@ -17,10 +17,10 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
-    "express-validator": "^5.3.1",
+    "express-validator": "^6.1.0",
     "file-type": "^11.1.0",
     "helmet": "^3.18.0",
-    "http-errors": "^1.7.2",
+    "http-errors": "^1.7.3",
     "knex": "^0.16.5",
     "moment": "^2.24.0",
     "morgan": "^1.9.0",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.2.2",
+    "eslint-plugin-vue": "^5.2.3",
     "nodemon": "^1.19.1"
   }
 }

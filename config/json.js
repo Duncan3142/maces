@@ -1,8 +1,8 @@
 'use strict';
 
-function JSONConfig(fs, mapped) {
+function JSONConfig(fs) {
 	return function (path) {
-		return mapped(JSON.parse(fs.readFileSync(path, 'utf8')));
+		return JSON.parse(fs.readFileSync(path, 'utf8'));
 	};
 }
 
