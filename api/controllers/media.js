@@ -29,9 +29,9 @@ function uploadMiddleware(multer, mimetype, filehash) {
 
 function validatorDefs(mimeTypes) {
 	return function(buildCheckFunction) {
-		const param = buildCheckFunction(['param']);
+		const param = buildCheckFunction(['params']);
 		const body = buildCheckFunction(['body']);
-		const header = buildCheckFunction(['header']);
+		const header = buildCheckFunction(['headers']);
 
 		return [
 			{
@@ -71,7 +71,7 @@ function validatorDefs(mimeTypes) {
 			{
 				name: 'ETag',
 				set: 'core',
-				middleware: header('if-none-match', 'Valid ETag required').optional().trim().matches(/[a-z0-9]{32}/)
+				middleware: header('if-none-match', 'Valid ETag required').optional().trim()
 			}
 		];
 	};
@@ -93,8 +93,9 @@ function routeDef(mediaService, multer, mimetype, filehash) {
 				},
 				{
 					name: 'get',
-					path: '/:id/data',
+					path: '/:id/:filename',
 					handler: verbHandler({
+						fields: ['id', 'ETag'],
 						service: mediaService.fetchData,
 					})
 				},

@@ -3,39 +3,20 @@ extends layout
 block append head
 	script(type="module" src="/javascript/index.js")
 
-mixin eventView(event)
-	article.event
-		div.content-container
-			- const image = event.image();
-			h2.title= event.title
-			p.location= event.location
-			p.when= event.when
-			if image
-				img.event-img(src=`/media/${image.id}/${image.name}`)
-			- descriptionParas = event.description.split('\n')
-			each para in descriptionParas
-				p= para
-			- const document = event.document();
-			if document
-				a.document(href=`/media/${document.id}/${document.name}`) #{document.link_text}
-
 block content
 	section.content
 
 		div#app
-			if error
-				p Error fetching content.
-			else if events.length
-				div.contents-header
+			div.contents-header
+				div.content-container
+					h2 Welcome to Macmillan East Sheen
+					p Please find our upcoming events below
+			section.events
+				article.event(v-for="event in events")
 					div.content-container
-						h2 Welcome to Macmillan East Sheen
-						p(v-bind:title="title" v-if="peekaboo") Please find our upcoming events below {{ message }}
-
-
-				section.events
-					each event in events
-						+eventView(event)
-			else
-				div.contents-header
-					div.content-container
-						h2 Watch this space for upcoming events
+						h2.title {{event.title}}
+						p.location {{event.location}}
+						p.when {{event.when}}
+						img.event-img(v-if="event.image" v-bind:src="`/api/media/${event.image.id}/${event.image.name}`")
+						p(v-for="para in event.description") {{para}}
+						a.document(v-if="event.document" v-bind:href="`/api/media/${event.document.id}/${event.document.name}`") {{event.document.link_text}}

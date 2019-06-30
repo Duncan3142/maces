@@ -4,7 +4,7 @@ const startBeforeEnd = (start, { req }) => (start <= req.body.end);
 
 function validatorDefs(mediaService) {
 	return function(buildCheckFunction) {
-		const param = buildCheckFunction(['param']);
+		const param = buildCheckFunction(['params']);
 		const body = buildCheckFunction(['body']);
 
 		return [

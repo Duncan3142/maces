@@ -1,7 +1,7 @@
 'use strict';
 
 function upsertTransaction(EventModel) {
-	return async function(event) {
+	return async function(event, res) {
 		const trnx = await EventModel.startTransaction();
 		try {
 			await EventModel
@@ -11,7 +11,8 @@ function upsertTransaction(EventModel) {
 						relate: true,
 						unrelate: true
 					});
-			return trnx.commit();
+			trnx.commit();
+			res.sendStatus(200);
 		} catch (err) {
 			trnx.rollback(err);
 			throw err;
@@ -22,8 +23,8 @@ function upsertTransaction(EventModel) {
 const mediaProjection = builder => builder.select(['media.id', 'media.description', 'media.name', 'media.link_text', 'media.type']);
 
 function fetch(EventModel) {
-	return function({id}) {
-		return EventModel
+	return async function({id}, res) {
+		const event = await EventModel
 			.query()
 			.select([
 				'id',
@@ -39,6 +40,7 @@ function fetch(EventModel) {
 			.eager('[image(mediaProjection), document(mediaProjection)]', {
 				mediaProjection: mediaProjection
 			});
+		res.json(event);
 	};
 }
 
@@ -54,31 +56,9 @@ function exists(EventModel) {
 }
 
 function list(EventModel) {
-	return EventModel.query()
-		.select([
-			'event.id',
-			'event.title',
-			'event.description',
-			'event.when',
-			'event.location',
-			'event.start',
-			'event.end',
-		])
-		.orderBy('start')
-		.eager('[image(mediaProjection), document(mediaProjection)]', {
-			mediaProjection: mediaProjection
-		});
-}
-
-function _delete(EventModel) {
-	return function({id}) {
-		return EventModel.query().deleteById(id);
-	};
-}
-
-function upcoming(EventModel) {
-	return function() {
-		return EventModel.query()
+	return async function(_, res) {
+		const events = await EventModel
+			.query()
 			.select([
 				'event.id',
 				'event.title',
@@ -88,11 +68,40 @@ function upcoming(EventModel) {
 				'event.start',
 				'event.end',
 			])
+			.orderBy('start')
+			.eager('[image(mediaProjection), document(mediaProjection)]', {
+				mediaProjection: mediaProjection
+			});
+		res.json(events);
+	};
+}
+
+function upcoming(EventModel) {
+	return async function(_, res) {
+		const events = await EventModel
+			.query()
+			.select([
+				'event.id',
+				'event.title',
+				'event.description',
+				'event.when',
+				'event.location',
+				'event.start',
+				'event.end'
+			])
 			.where('event.end', '>', new Date())
 			.orderBy('start')
 			.eager('[image(mediaProjection), document(mediaProjection)]', {
 				mediaProjection: mediaProjection
 			});
+		res.json(events);
+	};
+}
+
+function _delete(EventModel) {
+	return async function({id}, res) {
+		await EventModel.query().deleteById(id);
+		res.sendStatus(200);
 	};
 }
 

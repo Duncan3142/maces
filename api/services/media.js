@@ -1,27 +1,5 @@
 'use strict';
 
-function mediaQuery(MediaModel) {
-	return function(mimeFilter) {
-		return MediaModel
-			.query()
-			.select([
-				'id',
-				'name',
-				'description',
-				'link_text',
-				'type'
-			])
-			.whereIn('type', mimeFilter)
-			.orderBy(['type', 'name']);
-	};
-}
-function get(MediaModel, mimeFilters) {
-	return function(usage) {
-		const query = mediaQuery(MediaModel);
-		return query(mimeFilters[usage]);
-	};
-}
-
 function checkHash(MediaModel) {
 	return async function (id, hash) {
 		let result = hash ? true : false;
@@ -54,8 +32,9 @@ function getFile(MediaModel) {
 }
 
 function list(MediaModel) {
-	return function() {
-		return MediaModel.query()
+	return async function(_, res) {
+		const media = await MediaModel
+			.query()
 			.select([
 				'id',
 				'name',
@@ -64,81 +43,13 @@ function list(MediaModel) {
 				'type'
 			])
 			.orderBy(['type', 'name']);
+		res.json(media);
 	};
 }
 
-function checkMediaExists(MediaModel, mimeFilter) {
-	return async function(mediaID) {
+function listUsage(MediaModel, mimeFilters) {
+	return async function({usage},res) {
 		const media = await MediaModel
-			.query()
-			.select(['id'])
-			.where('id', mediaID)
-			.whereIn('type', mimeFilter)
-			.first();
-		return media ? media.id === mediaID : false;
-	};
-}
-
-function isValidID(id, check) {
-	return id < 0 ? true : check(id);
-}
-
-function validMediaID(MediaModel, mimeFilters) {
-	return function(usage) {
-		const check = checkMediaExists(MediaModel, mimeFilters[usage]);
-		return async function (mediaID) {
-			return await isValidID(mediaID, check);
-		};
-	};
-}
-
-async function deleteGraph(MediaModel, trnx, mediaID) {
-	const media = await MediaModel.query(trnx).findById(mediaID);
-	if (media) {
-		await media.$relatedQuery('event', trnx).unrelate();
-		await MediaModel.query(trnx).deleteById(mediaID);
-	}
-}
-
-function deleteTransaction(MediaModel) {
-	return function(mediaID) {
-		return async function() {
-			const trnx = await MediaModel.startTransaction();
-			try {
-				await deleteGraph(MediaModel, trnx, mediaID);
-				return trnx.commit();
-			} catch(err) {
-				trnx.rollback(err);
-				throw err;
-			}
-		};
-	};
-}
-
-function upsertTransaction(MediaModel) {
-	return function(media) {
-		return async function() {
-			const trnx = await MediaModel.startTransaction();
-			try {
-				await MediaModel
-					.query(trnx)
-					.upsertGraph(media,
-						{
-							relate: true,
-							unrelate: true
-						});
-				return trnx.commit();
-			} catch (err) {
-				trnx.rollback(err);
-				throw err;
-			}
-		};
-	};
-}
-
-function fetch(MediaModel) {
-	return function(mediaID) {
-		return MediaModel
 			.query()
 			.select([
 				'id',
@@ -147,27 +58,84 @@ function fetch(MediaModel) {
 				'link_text',
 				'type'
 			])
-			.where('id', mediaID)
+			.whereIn('type', mimeFilters[usage])
+			.orderBy(['type', 'name']);
+		res.json(media);
+	};
+}
+
+function validMediaID(MediaModel, mimeFilters) {
+	return function(usage) {
+		return async function(id) {
+			const media = await MediaModel
+				.query()
+				.select(['id'])
+				.where('id', id)
+				.whereIn('type', mimeFilters[usage])
+				.first();
+			return media ? media.id === id : false;
+		};
+	};
+}
+
+function _delete(MediaModel) {
+	return async function({id}, res) {
+		await MediaModel.query().deleteById(id);
+		res.sendStatus(200);
+	};
+}
+
+function upsertTransaction(MediaModel) {
+	return async function(media, res) {
+		const trnx = await MediaModel.startTransaction();
+		try {
+			await MediaModel
+				.query(trnx)
+				.upsertGraph(media,
+					{
+						relate: true,
+						unrelate: true
+					});
+			trnx.commit();
+			res.sendStatus(200);
+		} catch (err) {
+			trnx.rollback(err);
+			throw err;
+		}
+	};
+}
+
+function fetch(MediaModel) {
+	return async function({id}, res) {
+		const media = await MediaModel
+			.query()
+			.select([
+				'id',
+				'name',
+				'description',
+				'link_text',
+				'type'
+			])
+			.where('id', id)
 			.first();
+		res.json(media);
 	};
 }
 
 function fetchData(MediaModel) {
-	return async function(mediaID, ETag) {
-		const result = {};
-		const unmodified = await checkHash(MediaModel)(mediaID, ETag);
+	const _checkHash = checkHash(MediaModel);
+	const _getFile = getFile(MediaModel);
+	return async function({id, ['if-none-match']:ETag}, res) {
+		const unmodified = await _checkHash(id, ETag);
 		if (unmodified) {
-			result.status = 304;
+			res.sendStatus(304);
 		} else {
-			const media = await getFile(MediaModel)(mediaID);
-			result.headers = [
-				{
-					name: 'ETag',
-					value: media.hash
-				}
-			],
-			result.contentType = media.type;
-			result.payload = media.file;
+			const media = await _getFile(id);
+			res.set({
+				ETag: media.hash,
+				'Content-Type': media.type
+			});
+			res.send(media.file);
 		}
 	};
 }
@@ -176,8 +144,9 @@ function controller(database, mimeFilters) {
 	const MediaModel = database.getModel('media');
 	return {
 		upsert: upsertTransaction(MediaModel),
-		delete: deleteTransaction(MediaModel),
+		delete: _delete(MediaModel),
 		list: list(MediaModel),
+		listUsage: listUsage(MediaModel, mimeFilters),
 		fetch: fetch(MediaModel),
 		fetchData: fetchData(MediaModel),
 		validID: validMediaID(MediaModel, mimeFilters)

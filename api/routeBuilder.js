@@ -13,8 +13,7 @@ function verbHandlerFactory(validationResult, matchedData, isLoggedIn) {
 					try {
 						const validationErrors = validationResult(req);
 						if (validationErrors.isEmpty()) {
-							const serviceResult = await service(matchedData());
-							res.send(serviceResult);
+							await service(matchedData(req, {includeOptionals: true}), res);
 						} else {
 							res.json(validationErrors);
 						}
