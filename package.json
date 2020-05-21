@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon --inspect-brk=5858 ./bin/www"
+    "devstart": "nodemon ./bin/www"
   },
   "engines": {
-    "node": "10.15.3"
+    "node": "12.x"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
